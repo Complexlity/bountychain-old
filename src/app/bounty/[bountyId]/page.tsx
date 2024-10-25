@@ -35,7 +35,7 @@ export default function Page({ params }: { params: { bountyId: string } }) {
   const router = useRouter();
   invariant(bountyId, "Bounty Id is not defined");
 
-  const { data: bounty, isLoading, isError, } = useBounty(bountyId);
+  const { data: bounty, isLoading, isError } = useBounty(bountyId);
 
   useEffect(() => {
     if (!bountyId) {
@@ -186,11 +186,7 @@ function Bounty({ bounty }: Props) {
                   onChange={(e) => setNewSubmission(e.target.value)}
                   required
                 />
-                <Button
-                  disabled={!address || !newSubmission}
-                  type="submit"
-                  isLoading={isPending || isSigning}
-                >
+                <Button type="submit" isLoading={isPending || isSigning}>
                   Submit Solution
                 </Button>
               </div>

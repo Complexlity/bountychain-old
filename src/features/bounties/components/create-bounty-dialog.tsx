@@ -88,14 +88,14 @@ export function CreateBountyDialog({
       const returned = result as Awaited<ReturnType<typeof createBounty>>;
       return returned;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bounties"] });
       form.reset();
       toast({
         title: "Bounty created successfully",
       });
       setOpen(false);
-      router.push(`/bounty/${data.id}`);
+      router.push(`/bounties`);
     },
     onError: (error) => {
       toast({
