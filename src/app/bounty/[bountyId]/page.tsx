@@ -299,7 +299,7 @@ function PayButton({
       return result;
     },
     onError: () => {
-      //TODO: Retry this, or save for later. Handle bad db updates somehow
+      //TODO: Retry this, or save for later. Handle bad db updates somehow.
       console.log("Failed to update bounty");
     },
   });
