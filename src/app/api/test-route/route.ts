@@ -20,8 +20,8 @@ async function main() {
   return res;
 }
 
-export const GET = async (request: NextRequest) => {
-  console.log(request.url);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = async (_: NextRequest) => {
   const res = await main();
   return new Response(JSON.stringify(res));
 };

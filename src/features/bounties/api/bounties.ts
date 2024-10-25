@@ -1,11 +1,10 @@
-import { ClientActionFunctionArgs } from "@remix-run/react";
-import { Address } from "viem";
 import { arbitrumSepoliaPublicClient } from "@/lib/viem";
+import { NextRequest } from "next/server";
+import { Address } from "viem";
 import { BOUNTY_CONTRACT_ADDRESS, bountyAbi } from "../lib/constants";
 import { createBounty, getBounties } from "../lib/queries";
 import { CreateBountySchema } from "../lib/types";
 import { isZeroAddress } from "../lib/utils";
-import { NextRequest } from "next/server";
 export async function get() {
   const bounties = await getBounties();
   return bounties;

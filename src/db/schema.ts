@@ -7,7 +7,6 @@ import {
   unique,
 } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import * as z from "zod";
 
 const sqliteBoolean = integer({ mode: "boolean" });
 
@@ -48,10 +47,10 @@ export const submissions = sqliteTable(
   (table) => ({
     //One submission per address
     uniqueSubmission: unique().on(table.bountyId, table.creator),
-  }),
+  })
 );
 
-export const bountyRelations = relations(bounties, ({ one, many }) => ({
+export const bountyRelations = relations(bounties, ({ many }) => ({
   submissions: many(submissions),
 }));
 
@@ -84,8 +83,6 @@ export const insertBountiesSchema = createInsertSchema(bounties, {
   });
 
 export const selectSubmissionsSchema = createSelectSchema(submissions);
-
-type x = z.infer<typeof selectSubmissionsSchema>;
 
 export const insertSubmissionsSchema = createInsertSchema(submissions, {
   submissionDescription: (schema) =>

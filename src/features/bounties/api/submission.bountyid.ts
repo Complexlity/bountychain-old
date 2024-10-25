@@ -36,7 +36,7 @@ export async function post({ request }: { request: NextRequest }) {
   }
 
   const newSubmission = await createBountySubmission(formData).catch(
-    (e) => null
+    () => null
   ); // Create new bounty
   if (!newSubmission)
     return { message: "Something went wrong creating submission" };

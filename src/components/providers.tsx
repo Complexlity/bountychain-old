@@ -1,12 +1,11 @@
 "use client";
 
+import { wagmiConfig } from "@/lib/wagmi-config";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useChains, WagmiProvider } from "wagmi";
-import { wagmiConfig } from "@/lib/wagmi-config";
+import { WagmiProvider } from "wagmi";
 import { Toaster } from "./ui/toaster";
 const queryClient = new QueryClient();
-import { useNavigate, useHref } from "@remix-run/react";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

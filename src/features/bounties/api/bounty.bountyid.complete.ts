@@ -1,11 +1,10 @@
-import { ClientActionFunctionArgs, json } from "@remix-run/react";
+import { arbitrumSepoliaPublicClient } from "@/lib/viem";
+import { NextRequest } from "next/server";
 import { Address, decodeEventLog } from "viem";
 import { z } from "zod";
-import { arbitrumSepoliaPublicClient } from "@/lib/viem";
+import { bountyAbi } from "../lib/constants";
 import { completeBounty } from "../lib/queries";
 import { isZeroAddress } from "../lib/utils";
-import { bountyAbi } from "../lib/constants";
-import { NextRequest } from "next/server";
 
 const postSchema = z.object({
   hash: z

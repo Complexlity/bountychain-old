@@ -2,11 +2,14 @@ import { get, post } from "@/features/bounties/api/submission.bountyid";
 import { NextRequest } from "next/server";
 
 // Loader function handles GET requests
-export const GET = async ({
-  params,
-}: {
-  params: Promise<{ bountyId: string }>;
-}) => {
+export const GET = async (
+  _: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ bountyId: string }>;
+  }
+) => {
   const bountyId = (await params).bountyId;
   const res = await get({ params: { bountyId } });
   return new Response(JSON.stringify(res), {
