@@ -115,6 +115,7 @@ function Bounty({ bounty }: Props) {
 
     if (!newSubmission) {
       toast({
+        variant: "destructive",
         title: "Submission Required",
         description: "Please provide a description of your solution",
       });
@@ -123,6 +124,7 @@ function Bounty({ bounty }: Props) {
 
     if (!address) {
       toast({
+        variant: "destructive",
         title: "Wallet Not Connected",
         description: "Please connect your wallet to submit a solution",
       });
