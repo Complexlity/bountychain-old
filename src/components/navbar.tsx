@@ -33,7 +33,7 @@ export default function Navbar() {
           </Link>
           <CreateBountyDialog>
             <Button className="bold hidden h-fit rounded-none md:inline-block">
-              Create Bounty
+              Create New Bounty
             </Button>
           </CreateBountyDialog>
           <ConnectButton chainStatus={"icon"} showBalance={false} />
