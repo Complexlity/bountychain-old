@@ -6,7 +6,7 @@ import { CreateBountyDialog } from "@/features/bounties/components/create-bounty
 
 export default function Navbar() {
   return (
-    <div className="te">
+    <div>
       <header className="flex h-14 items-center justify-between px-4 py-8 lg:px-6">
         <Link className="flex items-center justify-center" href="/">
           <Coins className="h-6 w-6" />
