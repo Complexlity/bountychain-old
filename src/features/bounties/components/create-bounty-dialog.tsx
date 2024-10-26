@@ -158,23 +158,24 @@ export function CreateBountyDialog({
           {children ? children : <Button>Create Bounty</Button>}
         </DialogTrigger>
         <DialogContent
-          className="sm:max-w-[425px]"
+          className="sm:max-w-[425px] rounded-none sm:rounded-none"
           portalContainer={container}
           onInteractOutside={(e) => e.preventDefault()}
         >
           <>
             <DialogHeader>
-              <DialogTitle>Create New Bounty</DialogTitle>
+              <DialogTitle className="text-center text-3xl">
+                Create New Bounty
+              </DialogTitle>
 
-              <DialogDescription>
-                Fill in the details for your new bounty. Click create when
-                you&apos;re done.
+              <DialogDescription className="text-center">
+                Fill in the details for your new bounty.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
+                className="flex flex-col gap-4 rounded-none"
               >
                 <FormField
                   control={form.control}
@@ -229,6 +230,7 @@ export function CreateBountyDialog({
                   )}
                 />
                 <Button
+                  className="rounded-none"
                   isLoading={isSendingDataToDb || isCreatingBountyOnchain}
                   type="submit"
                 >
@@ -238,12 +240,12 @@ export function CreateBountyDialog({
             </Form>
           </>
         </DialogContent>
+        <div
+          // @ts-expect-error: ref accepts set state action
+          ref={setContainer}
+          className="dialog-portal bg-transparent bg-orange-400"
+        />
       </Dialog>
-      <div
-        // @ts-expect-error: ref accepts set state action
-        ref={setContainer}
-        className="dialog-portal bg-transparent"
-      />
     </div>
   );
 }
