@@ -20,16 +20,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
-export default function Index() {
+export default function Page() {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="grid flex-1 gap-12">
         <Hero />
         <Features />
         <OngoingBounties />
+        <Faq />
       </main>
-      <Footer />
     </div>
   );
 }
@@ -145,10 +151,11 @@ function Features() {
 }
 
 function OngoingBounties() {
-  let { data } = useBounties();
-  if (!data) {
-    data = [];
+  const { data } = useBounties();
+  if (!data || data.length === 0) {
+    return null;
   }
+
   return (
     <section className="w-full py-12">
       <MaxWidthWrapper>
@@ -160,24 +167,6 @@ function OngoingBounties() {
         </div>
       </MaxWidthWrapper>
     </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="flex w-full shrink-0 flex-col items-center gap-2 border-t px-4 py-6 sm:flex-row md:px-6">
-      <p className="text-xs text-gray-500 dark:text-gray-400">
-        © 2024 BountyChain. All rights reserved.
-      </p>
-      <nav className="flex gap-4 sm:ml-auto sm:gap-6">
-        <Link className="text-xs underline-offset-4 hover:underline" href="#">
-          Terms of Service
-        </Link>
-        <Link className="text-xs underline-offset-4 hover:underline" href="#">
-          Privacy
-        </Link>
-      </nav>
-    </footer>
   );
 }
 
@@ -231,6 +220,42 @@ function BountyCard({ bounty }: { bounty: bounty }) {
           </Link>
         </CardFooter>
       </Card>
+    </div>
+  );
+}
+
+function Faq() {
+  const faqs = [
+    {
+      question: "Are there any fees?",
+      answer:
+        "No, the contracts are only responsible for taking and paying out the bounty. There are no fees for using the platform.",
+    },
+    {
+      question: "Is it fully onchain?",
+      answer:
+        "Yes, the monetary aspect of the platform is fully onchain. However, the content is stored offchain to ease access to the data.",
+    },
+    {
+      question: "What chains are supported?",
+      answer:
+        "Currently, the platform supports only Arbitrum but it's planned to be deployed on other ETH chains base, optimism and mainnet",
+    },
+  ];
+
+  return (
+    <div className="w-full max-w-3xl mx-auto p-6">
+      <h2 className="text-3xl font-bold mb-6 text-center">
+        Frequently Asked Questions
+      </h2>
+      <Accordion type="single" collapsible className="w-full">
+        {faqs.map((faq, index) => (
+          <AccordionItem key={index} value={`item-${index}`}>
+            <AccordionTrigger>{faq.question}</AccordionTrigger>
+            <AccordionContent>{faq.answer}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 }

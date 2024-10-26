@@ -4,6 +4,7 @@ import "./globals.css";
 import Providers from "@/components/providers";
 import Navbar from "@/components/navbar";
 import "@rainbow-me/rainbowkit/styles.css";
+import { Footer } from "@/components/footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +35,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>
