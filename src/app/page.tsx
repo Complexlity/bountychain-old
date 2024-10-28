@@ -98,7 +98,7 @@ function Features() {
         <MaxWidthWrapper className="grid grid-cols-2 items-center justify-center gap-4 md:grid-cols-3">
           <div className="flex justify-center">
             <GlareCard>
-              <Card className="h-full border-none bg-sky-950 text-white">
+              <Card className="text-sm sm:text-base h-full border-none bg-sky-950 text-white">
                 <CardHeader>
                   <Search className="mb-2 h-6 w-6" />
                   <CardTitle>Discover Opportunities</CardTitle>
@@ -113,7 +113,7 @@ function Features() {
           </div>
           <div className="flex items-center justify-center">
             <GlareCard>
-              <Card className="h-full border-none bg-blue-950 text-white">
+              <Card className="text-sm sm:text-base h-full border-none bg-blue-950 text-white">
                 <CardHeader>
                   <Award className="mb-2 h-6 w-6" />
                   <CardTitle>Earn Rewards</CardTitle>
@@ -128,7 +128,7 @@ function Features() {
           </div>
           <div className="flex items-center justify-center">
             <GlareCard>
-              <Card className="h-full border-none bg-cyan-950 text-white">
+              <Card className="text-sm sm:text-base h-full border-none bg-cyan-950 text-white">
                 <CardHeader>
                   <Wallet className="mb-2 h-6 w-6" />
                   <CardTitle>Decentralized Payments</CardTitle>
