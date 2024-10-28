@@ -15,6 +15,7 @@ import {
 import { BountyCard } from "@/features/bounties/components/bounty-card";
 import { CreateBountyDialog } from "@/features/bounties/components/create-bounty-dialog";
 import { useBounties } from "@/features/bounties/hooks/bounties";
+import { GradientSpinner } from "@/components/ui/gradient-spinner";
 
 export default function BountiesPage() {
   const { data, isPending } = useBounties();
@@ -22,9 +23,9 @@ export default function BountiesPage() {
   const filteredBounties = data?.filter((bounty) => bounty.status === status);
 
   return (
-    <MaxWidthWrapper className="relative max-w-[1200px] py-8 flex-1">
+    <MaxWidthWrapper className="relative max-w-[1200px] py-8 flex-1 flex flex-col">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold dark:text-white">
+        <h1 className="text-xl sm:text-3xl font-bold dark:text-white">
           {status === "ongoing" ? "Ongoing Bounties" : "Completed Bounties"} (
           {filteredBounties?.length})
         </h1>
@@ -42,9 +43,17 @@ export default function BountiesPage() {
         </Select>
       </div>
       {isPending ? (
-        <div className="flex items-center justify-center">
-          <Plus className="animate-spin h-5 w-5" />
-          Loading...
+        <div className="flex flex-col gap-8 items-center justify-center  flex-1">
+          {/* <Plus className="animate-spin h-5 w-5" />
+          Loading... */}
+          <GradientSpinner
+            from="from-cyan-500"
+            to="to-blue-500"
+            via="via-gray-100"
+            innerCircleSize={24}
+            outerCirclePadding={3}
+          />
+          <p>Getting Bounties...</p>
         </div>
       ) : filteredBounties && filteredBounties.length > 0 ? (
         <div className="grid justify-center gap-6 py-2 md:grid-cols-2 lg:grid-cols-3 grid-flow-row">
