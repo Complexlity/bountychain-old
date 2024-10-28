@@ -16,6 +16,7 @@ import { BountyCard } from "@/features/bounties/components/bounty-card";
 import { CreateBountyDialog } from "@/features/bounties/components/create-bounty-dialog";
 import { useBounties } from "@/features/bounties/hooks/bounties";
 import { GradientSpinner } from "@/components/ui/gradient-spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BountiesPage() {
   const { data, isPending } = useBounties();
@@ -26,21 +27,29 @@ export default function BountiesPage() {
     <MaxWidthWrapper className="relative max-w-[1200px] py-8 flex-1 flex flex-col">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-xl sm:text-3xl font-bold dark:text-white">
-          {status === "ongoing" ? "Ongoing Bounties" : "Completed Bounties"} (
-          {filteredBounties?.length})
+          {isPending
+            ? "Bounties"
+            : status === "ongoing"
+            ? "Ongoing Bounties"
+            : "Completed Bounties"}{" "}
+          {!isPending ? `(${filteredBounties?.length})` : ""}
         </h1>
-        <Select value={status} onValueChange={(value) => setStatus(value)}>
-          <SelectTrigger className="w-[180px] rounded-none dark:text-white">
-            <SelectValue placeholder="Filter By Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Bounty Status</SelectLabel>
-              <SelectItem value="ongoing">Ongoing</SelectItem>
-              <SelectItem value="complete">Complete</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        {isPending ? (
+          <Skeleton className="w-[180px] rounded-none h-9" />
+        ) : (
+          <Select value={status} onValueChange={(value) => setStatus(value)}>
+            <SelectTrigger className="w-[180px] rounded-none dark:text-white">
+              <SelectValue placeholder="Filter By Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Bounty Status</SelectLabel>
+                <SelectItem value="ongoing">Ongoing</SelectItem>
+                <SelectItem value="complete">Complete</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        )}
       </div>
       {isPending ? (
         <div className="flex flex-col gap-8 items-center justify-center  flex-1">
