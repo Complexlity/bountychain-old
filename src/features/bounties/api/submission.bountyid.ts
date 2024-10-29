@@ -11,6 +11,7 @@ import type {
   WithSignature,
 } from "@/features/bounties/lib/types";
 import { NextRequest } from "next/server";
+import { insertSubmissionsSchema } from "@/db/schema";
 
 export async function get({ params }: { params: { bountyId: string } }) {
   // Handle GET request
@@ -32,13 +33,18 @@ export async function post({ request }: { request: NextRequest }) {
     signature,
   });
   if (!isValid) {
-    return { message: "Invalid signature" };
+    return { message: "Invalid signature", status: 422 };
+  }
+  const { success, error } = insertSubmissionsSchema.safeParse(formData);
+  if (!success) {
+    const message = error.flatten();
+    return { message, status: 422 };
   }
 
   const newSubmission = await createBountySubmission(formData).catch(
     () => null
   ); // Create new bounty
   if (!newSubmission)
-    return { message: "Something went wrong creating submission" };
+    return { message: "Something went wrong creating submission", status: 500 };
   return newSubmission;
 }

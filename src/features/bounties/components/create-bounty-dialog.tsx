@@ -89,7 +89,9 @@ export function CreateBountyDialog({
       return returned;
     },
     onSuccess: () => {
+      alert('Invalidating queries')
       queryClient.invalidateQueries({ queryKey: ["bounties"] });
+      alert('Invalidating query bounties')
       form.reset();
       toast({
         title: "Bounty created successfully",

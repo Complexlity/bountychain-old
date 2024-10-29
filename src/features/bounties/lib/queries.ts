@@ -66,7 +66,17 @@ export async function getBountySubmissions(id: string) {
 export async function createBountySubmission(
   newSubmission: CreateSubmissionSchema
 ) {
-  insertSubmissionsSchema.parse(newSubmission);
+
+  //Insert only if bounty status is ongoing
+  const bounty = await db.query.bounties.findFirst({
+    where(fields, operators) {
+      return operators.eq(fields.id, newSubmission.bountyId);
+    },
+  });
+
+  if (!bounty ||bounty.status !== "ongoing") {
+    return null;
+  }
   const [insertted] = await db
     .insert(submissions)
     .values(newSubmission)

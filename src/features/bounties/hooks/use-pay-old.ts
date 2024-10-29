@@ -33,7 +33,7 @@ export const usePayBountyOld = (
     isAddress(winnerAddress) &&
     isAddress(callerAddress);
 
-  const { data } = useSimulateContract({
+  const { data, isError: simulateError } = useSimulateContract({
     chainId: chain?.id,
     account: callerAddress,
     address: BOUNTY_CONTRACT_ADDRESS,
@@ -43,6 +43,8 @@ export const usePayBountyOld = (
     query: { enabled },
   });
 
+  console.log({ simulateError });
+
   const {
     data: txHash,
     isPending: isWaiting,
@@ -50,6 +52,8 @@ export const usePayBountyOld = (
     isSuccess: isSendingSuccess,
     writeContract: _sendPayBountyTransaction,
   } = useWriteContract();
+
+  console.log({ isSendingError });
 
   const sendPayBountyTransaction =
     !!data && !!_sendPayBountyTransaction
@@ -69,6 +73,8 @@ export const usePayBountyOld = (
     isError: isConfirmingError,
     error,
   } = useWaitForTransactionReceipt({ chainId: chain?.id, hash: txHash });
+
+  console.log({ isConfirmingError });
 
   useEffect(() => {
     if (!!txReceipt && !!txHash && isSuccess) {

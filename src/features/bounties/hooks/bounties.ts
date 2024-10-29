@@ -6,6 +6,7 @@ export function useBounties() {
     queryKey: ["bounties"],
     queryFn: async () => {
       try {
+        // alert("Calling bounties api again..");
         const res = await fetch("/api/bounties");
         if (!res.ok) {
           throw new Error("Failed to fetch bounties");
@@ -19,7 +20,7 @@ export function useBounties() {
   });
 }
 
-export function useBounty(id?: string) {
+export function useBounty(id: string) {
   return useQuery<Awaited<ReturnType<typeof getBounty>> | null>({
     queryKey: ["bounty", id],
     queryFn: async () => {
