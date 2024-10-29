@@ -5,21 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { CopyButton } from "@/components/ui/copy-button";
-import { CheckCircle2, Clock, Loader2, Trophy, User } from "lucide-react";
-import { type Submission } from "../lib/types";
-import { toast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { usePayBountyOld } from "../hooks/use-pay-old";
-import type { Address } from "viem";
-import { useAccount } from "wagmi";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import env from "@/lib/server-env";
+import { toast } from "@/hooks/use-toast";
 import clientEnv from "@/lib/client-env";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CheckCircle2, Clock, Loader2, Trophy, User } from "lucide-react";
+import type { Address } from "viem";
+import { useAccount } from "wagmi";
+import { usePayBountyOld } from "../hooks/use-pay-old";
+import { type Submission } from "../lib/types";
 
 interface SubmissionCardProps {
   submission: Submission;
