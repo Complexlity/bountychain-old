@@ -18,6 +18,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import env from "@/lib/server-env";
+import clientEnv from "@/lib/client-env";
 
 interface SubmissionCardProps {
   submission: Submission;
@@ -51,16 +53,67 @@ export function SubmissionCard({
   const isPending = !submission.isComplete && isOngoing;
   const isUserSubmission = submission.creator == address;
 
+  const { mutateAsync: updateBountyBackup } = useMutation({
+    mutationKey: ["payBounty"],
+    mutationFn: async ({
+      bountyId,
+      submissionId,
+      hash,
+    }: {
+      bountyId: string;
+      submissionId: number;
+      hash: string;
+    }) => {
+      const res = await fetch(
+        `${clientEnv.NEXT_PUBLIC_BACKUP_SERVER}/bounties/complete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            hash,
+            submissionId,
+            bountyId,
+          }),
+        }
+      );
+      const result = await res.json();
+      if (!res.ok) {
+        throw result;
+      }
+      return result;
+    },
+    onError: () => {
+      toast({
+        title: "Could not update bounty",
+        description:
+          "Please contact complexlity: https://warpcast.com/complexlity",
+        variant: "destructive",
+      });
+
+      console.log("Failed to update bounty");
+    },
+  });
+
   const { mutateAsync: updateBounty, isPending: isUpdating } = useMutation({
     mutationKey: ["payBounty"],
-    mutationFn: async (txHash: Address) => {
+    mutationFn: async ({
+      bountyId,
+      submissionId,
+      hash,
+    }: {
+      bountyId: string;
+      submissionId: number;
+      hash: string;
+    }) => {
       const res = await fetch(`/api/bounty/${bountyId}/complete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          hash: txHash,
+          hash,
           submissionId,
           bountyId,
         }),
@@ -71,7 +124,12 @@ export function SubmissionCard({
       }
       return result;
     },
-    onError: () => {
+    onError: async (error, data) => {
+      //Send completion data to backup server if
+      await updateBountyBackup(data);
+      toast({
+        title: "Bounty details will update shortly...",
+      });
       //TODO: Retry this, or save for later. Handle bad db updates somehow.
       console.log("Failed to update bounty");
     },
@@ -82,7 +140,7 @@ export function SubmissionCard({
       { bountyId, submissionId, winnerAddress, callerAddress },
       {
         onSuccess: async (txHash: Address) => {
-          await updateBounty(txHash);
+          await updateBounty({ bountyId, submissionId, hash: txHash });
           queryClient.invalidateQueries({ queryKey: ["bounty", bountyId] });
         },
         onError: (error) => {
@@ -101,7 +159,6 @@ export function SubmissionCard({
         },
       }
     );
-
 
   return (
     <Card

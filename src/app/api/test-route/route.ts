@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
 import * as schema from "@/db/schema";
 import { NextRequest } from "next/server";
-import env from "@/lib/env";
+import env from "@/lib/server-env";
 
 const data = {
   url: env.DATABASE_URL,

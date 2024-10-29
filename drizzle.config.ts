@@ -1,6 +1,6 @@
 import { defineConfig } from "drizzle-kit";
 
-import env from "@/lib/env";
+import env from "@/lib/server-env";
 
 const config = Object.freeze({
   schema: "./src/db/schema.ts",

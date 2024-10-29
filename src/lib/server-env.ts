@@ -1,19 +1,17 @@
+"use server";
+
 import { z } from "zod";
-import { isAddress } from "viem"; // Assuming you're using viem for address validation
+import { Prettify } from "./types";
 
 const Dialect = z.enum(["sqlite", "turso"]);
 type Dialect = Prettify<z.infer<typeof Dialect>>;
 
-const EnvSchema = z
+const serverEnvSchema = z
   .object({
     NODE_ENV: z.string().default("development"),
     DATABASE_URL: z.string().url(),
     DATABASE_AUTH_TOKEN: z.string().optional(),
     DIALECT: Dialect.optional(),
-    BOUNTY_CONTRACT_ADDRESS: z
-      .string()
-      .min(1)
-      .refine((val) => isAddress(val)),
   })
   .superRefine((input, ctx) => {
     if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {
@@ -31,18 +29,14 @@ const EnvSchema = z
     DIALECT: env.NODE_ENV === "production" ? "turso" : "sqlite",
   }))
   .refine((env): env is Prettify<typeof env & { DIALECT: Dialect }> => true);
-export type env = z.infer<typeof EnvSchema>;
+export type serverEnv = z.infer<typeof serverEnvSchema>;
 
-type Prettify<T> = {
-  [K in keyof T]: T[K];
-} & {};
-
-const { data: env, error } = EnvSchema.safeParse(process.env);
+const { data: serverEnv, error } = serverEnvSchema.safeParse(process.env);
 
 if (error) {
   console.error("❌ Invalid env:");
   console.error(JSON.stringify(error.flatten().fieldErrors, null, 2));
-  process.exit(1);
+  throw new Error("Invalid env");
 }
 
-export default env!;
+export default serverEnv!;

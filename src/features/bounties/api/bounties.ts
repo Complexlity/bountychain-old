@@ -6,7 +6,6 @@ import { createBounty, getBounties } from "../lib/queries";
 import { CreateBountySchema } from "../lib/types";
 import { isZeroAddress } from "../lib/utils";
 export async function get() {
-  console.log("Getting bounties...");
   const bounties = await getBounties();
   return bounties;
 }

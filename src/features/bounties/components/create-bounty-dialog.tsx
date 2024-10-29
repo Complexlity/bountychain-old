@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { insertBountiesSchema } from "@/db/schema";
 import { useCreateBounty } from "@/features/bounties/hooks/use-create-bounty";
 import { toast } from "@/hooks/use-toast";
+import clientEnv from "@/lib/client-env";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -71,6 +72,44 @@ export function CreateBountyDialog({
     },
   });
 
+  const { mutate: sendDataToBackupServer } = useMutation({
+    mutationKey: ["backupBounty"],
+    mutationFn: async (data: CreateBountySchema) => {
+      const baseUrl = clientEnv.NEXT_PUBLIC_BACKUP_SERVER;
+      const res = await fetch(`${baseUrl}/bounties`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        throw result;
+      }
+      const returned = result as Awaited<ReturnType<typeof createBounty>>;
+      return returned;
+    },
+    onSuccess: () => {
+      alert("Invalidating queries");
+      queryClient.invalidateQueries({ queryKey: ["bounties"] });
+      alert("Invalidating query bounties");
+      form.reset();
+      toast({
+        title: "Bounty created successfully",
+      });
+      setOpen(false);
+      router.push(`/bounties`);
+    },
+    onError: async (error, data) => {
+      sendDataToBackupServer(data);
+      toast({
+        title: "Error creating bounty",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
   const { mutate: sendDataToDb, isPending: isSendingDataToDb } = useMutation({
     mutationKey: ["createBounty"],
     mutationFn: async (data: CreateBountySchema) => {
@@ -89,9 +128,9 @@ export function CreateBountyDialog({
       return returned;
     },
     onSuccess: () => {
-      alert('Invalidating queries')
+      alert("Invalidating queries");
       queryClient.invalidateQueries({ queryKey: ["bounties"] });
-      alert('Invalidating query bounties')
+      alert("Invalidating query bounties");
       form.reset();
       toast({
         title: "Bounty created successfully",
@@ -99,7 +138,8 @@ export function CreateBountyDialog({
       setOpen(false);
       router.push(`/bounties`);
     },
-    onError: (error) => {
+    onError: async (error, data) => {
+      sendDataToBackupServer(data);
       toast({
         title: "Error creating bounty",
         description: error.message,
@@ -128,26 +168,26 @@ export function CreateBountyDialog({
       setOpen(false);
       return;
     }
-    const { bountyId, hash } = await createBountyOnChain(values.amount);
-
-    if (!bountyId) {
-      toast({
-        title: "Something went wrong creating bounty",
-        description:
-          "Please copy your transaction hash from the alert for dispute",
-      });
-      alert(`Transaction hash ${hash}`);
-      return;
-    }
-    const data: CreateBountySchema = {
+    const bountyData = {
       title: values.title,
       description: values.description,
       amount: Number(values.amount),
       creator: address,
-      id: bountyId,
     };
 
-    sendDataToDb(data);
+    const { bountyId } = await createBountyOnChain(values.amount).catch((e) => {
+      toast({
+        title: "Something went wrong creating bounty",
+        description: e.message,
+        variant: "destructive",
+      });
+      return { bountyId: null, hash: null };
+    });
+
+    if (bountyId) {
+      const data: CreateBountySchema = { ...bountyData, id: bountyId };
+      sendDataToDb(data);
+    }
   };
 
   return (
