@@ -1,4 +1,4 @@
-"use server"
+"server-only";
 
 /* eslint-disable import/no-unresolved */
 import db from "@/db";
@@ -66,7 +66,6 @@ export async function getBountySubmissions(id: string) {
 export async function createBountySubmission(
   newSubmission: CreateSubmissionSchema
 ) {
-
   //Insert only if bounty status is ongoing
   const bounty = await db.query.bounties.findFirst({
     where(fields, operators) {
@@ -74,7 +73,7 @@ export async function createBountySubmission(
     },
   });
 
-  if (!bounty ||bounty.status !== "ongoing") {
+  if (!bounty || bounty.status !== "ongoing") {
     return null;
   }
   const [insertted] = await db

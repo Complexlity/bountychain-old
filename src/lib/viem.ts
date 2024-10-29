@@ -1,4 +1,4 @@
-"use server";
+"server-only";
 
 import { createPublicClient, http } from "viem";
 import { arbitrum, arbitrumSepolia } from "viem/chains";

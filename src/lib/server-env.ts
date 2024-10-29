@@ -1,4 +1,4 @@
-"use server";
+"server-only";
 
 import { z } from "zod";
 import { Prettify } from "./types";
