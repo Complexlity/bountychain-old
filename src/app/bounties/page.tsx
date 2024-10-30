@@ -53,15 +53,7 @@ export default function BountiesPage() {
       </div>
       {isPending ? (
         <div className="flex flex-col gap-8 items-center justify-center  flex-1">
-          {/* <Plus className="animate-spin h-5 w-5" />
-          Loading... */}
-          <GradientSpinner
-            from="from-cyan-500"
-            to="to-blue-500"
-            via="via-gray-100"
-            innerCircleSize={24}
-            outerCirclePadding={3}
-          />
+          <GradientSpinner />
           <p>Getting Bounties...</p>
         </div>
       ) : filteredBounties && filteredBounties.length > 0 ? (

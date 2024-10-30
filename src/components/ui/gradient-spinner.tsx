@@ -10,28 +10,30 @@ type Props = {
 
 export function GradientSpinner(options: Props) {
   const {
-    from = "from-green-500",
+    from = "from-cyan-500",
     to = "to-blue-500",
-    via = "",
-    innerCircleSize = 24,
-    outerCirclePadding = 4,
+    via = "via-gray-300",
+    innerCircleSize = 72,
+    outerCirclePadding = 16,
   } = options;
 
   return (
     <div
+      style={{
+        "--paddingSize": `${outerCirclePadding}px`,
+      }}
       className={cn(
-        `p-${outerCirclePadding} bg-gradient-to-tr animate-spin rounded-full`,
-        {
-          [from]: !!from,
-          [to]: !!to,
-          [via]: !!via,
-        }
+        `p-[--paddingSize] bg-gradient-to-tr animate-spin rounded-full `,
+        from,
+        to,
+        via
       )}
     >
       <div
-        className={cn(
-          `w-${innerCircleSize} h-${innerCircleSize} rounded-full bg-white`
-        )}
+        style={{
+          "--size": `${innerCircleSize}px`,
+        }}
+        className={cn(`w-[--size] h-[--size] rounded-full bg-white`)}
       ></div>
     </div>
   );
