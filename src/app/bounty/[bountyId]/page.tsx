@@ -1,5 +1,6 @@
 "use client";
 
+import { GradientSpinner } from "@/components/ui/gradient-spinner";
 import { Bounty } from "@/features/bounties/components/bounty";
 import { useBounty } from "@/features/bounties/hooks/bounties";
 import { useRouter } from "next/navigation";
@@ -27,7 +28,12 @@ export default function Page({ params }: { params: { bountyId: string } }) {
   }, [isLoading, bounty, isError]);
 
   if (!bountyId || isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col gap-8 items-center justify-center  flex-1">
+        <GradientSpinner />
+        <p>Getting Bounty...</p>
+      </div>
+    );
   }
 
   if (isError) {
