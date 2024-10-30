@@ -19,13 +19,13 @@ export default function Page({ params }: { params: { bountyId: string } }) {
       router.push("/bounties");
       return;
     }
-  }, [bountyId]);
+  }, [bountyId, router]);
 
   useEffect(() => {
     if (!isLoading && (!bounty || isError)) {
       router.push("/bounties");
     }
-  }, [isLoading, bounty, isError]);
+  }, [isLoading, bounty, isError, router]);
 
   if (!bountyId || isLoading) {
     return (
