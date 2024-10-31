@@ -7,7 +7,8 @@ import {
   useWriteContract,
 } from "wagmi";
 
-import { BOUNTY_CONTRACT_ADDRESS, bountyAbi } from "../lib/constants";
+import { activeChain, bountyAbi } from "../lib/constants";
+import { supportedChains } from "@/lib/viem";
 // import { useGasAmountEstimate } from '..';
 
 type PayBountyArgs = {
@@ -37,7 +38,7 @@ export const usePayBounty = (
   const { data } = useSimulateContract({
     chainId: chain?.id,
     account: callerAddress,
-    address: BOUNTY_CONTRACT_ADDRESS,
+    address: supportedChains[activeChain].contractAddress,
     abi: bountyAbi,
     functionName: "payBounty",
     args: [bountyId as Address, winnerAddress],

@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { Address } from "viem";
 import { useWriteContract } from "wagmi";
-import { arbitrumSepoliaPublicClient } from "@/lib/viem";
-import { bountyAbi } from "../lib/constants";
+import { activeChain, bountyAbi } from "../lib/constants";
+import { getPublicClient, supportedChains } from "@/lib/viem";
 
 export const usePayBountyAsync = ({
   writeContractAsync,
@@ -18,13 +18,11 @@ export const usePayBountyAsync = ({
       callerAddress: Address;
     }) => {
       const { bountyId, winnerAddress, callerAddress } = options;
-      const bountyContractAddress =
-        "0x6E46796857a0E061374a0Bcb4Ce01af851773d2A";
-      console.log("Simulating contract...");
+      const publicClient = getPublicClient(activeChain);
 
-      const { request } = await arbitrumSepoliaPublicClient.simulateContract({
+      const { request } = await publicClient.simulateContract({
         account: callerAddress,
-        address: bountyContractAddress,
+        address: supportedChains[activeChain].contractAddress,
         abi: bountyAbi,
         functionName: "payBounty",
         args: [bountyId as Address, winnerAddress],
@@ -38,10 +36,9 @@ export const usePayBountyAsync = ({
       console.log("Writing contract...");
       const hash = await writeContractAsync(request);
 
-      const receipt =
-        await arbitrumSepoliaPublicClient.waitForTransactionReceipt({
-          hash,
-        });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+      });
       console.log(receipt.transactionHash);
       return { hash };
     },

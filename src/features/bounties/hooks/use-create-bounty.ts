@@ -2,10 +2,11 @@ import {
   default as abi,
   default as BountyContractABI,
 } from "@/features/bounties/contract/bountyAbi.json";
-import { arbitrumSepoliaPublicClient } from "@/lib/viem";
+import { getPublicClient } from "@/lib/viem";
 import { useMutation } from "@tanstack/react-query";
 import { Address, decodeEventLog, parseEther } from "viem";
 import { useWriteContract } from "wagmi";
+import { activeChain } from "../lib/constants";
 
 export const useCreateBounty = ({
   writeContractAsync,
@@ -17,8 +18,9 @@ export const useCreateBounty = ({
   return useMutation({
     mutationFn: async (amount: number, tokenType: "ETH" | "USDC" = "ETH") => {
       const isETH = tokenType === "ETH";
+      const publicClient = getPublicClient(activeChain);
 
-      const { request } = await arbitrumSepoliaPublicClient.simulateContract({
+      const { request } = await publicClient.simulateContract({
         address: bountyContractAddress,
         abi: BountyContractABI,
         functionName: "createBounty",
@@ -31,10 +33,9 @@ export const useCreateBounty = ({
 
       const hash = await writeContractAsync(request);
 
-      const receipt =
-        await arbitrumSepoliaPublicClient.waitForTransactionReceipt({
-          hash,
-        });
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+      });
       const log = receipt.logs[0];
       const decoded = decodeEventLog({
         abi,

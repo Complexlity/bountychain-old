@@ -6,7 +6,6 @@ export function useBounties() {
     queryKey: ["bounties"],
     queryFn: async () => {
       try {
-        // alert("Calling bounties api again..");
         const res = await fetch("/api/bounties");
         if (!res.ok) {
           throw new Error("Failed to fetch bounties");

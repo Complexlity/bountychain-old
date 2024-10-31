@@ -1,17 +1,16 @@
+"server-only";
+
 import invariant from "tiny-invariant";
 import { createBountySubmission, getBountySubmissions } from "../lib/queries";
 import { isAddress } from "viem";
-// import {
-//   WithSignature,
-//   CreateBountySubmissionSchema,
-// } from "@/app/routes/bounty.$bountyId";
-import { arbitrumSepoliaPublicClient } from "@/lib/viem";
 import type {
   CreateBountySubmissionSchema,
   WithSignature,
 } from "@/features/bounties/lib/types";
 import { NextRequest } from "next/server";
 import { insertSubmissionsSchema } from "@/db/schema";
+import { getPublicClient } from "@/lib/viem";
+import { activeChain } from "../lib/constants";
 
 export async function get({ params }: { params: { bountyId: string } }) {
   // Handle GET request
@@ -27,7 +26,7 @@ export async function post({ request }: { request: NextRequest }) {
   if (!signature || !isAddress(address)) {
     return { message: "Signature or Address Invalid" };
   }
-  const isValid = await arbitrumSepoliaPublicClient.verifyMessage({
+  const isValid = await getPublicClient(activeChain).verifyMessage({
     address,
     message: JSON.stringify(message),
     signature,

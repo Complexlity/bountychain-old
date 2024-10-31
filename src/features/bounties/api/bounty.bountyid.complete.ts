@@ -1,8 +1,8 @@
-import { arbitrumSepoliaPublicClient } from "@/lib/viem";
+import { getPublicClient } from "@/lib/viem";
 import { NextRequest } from "next/server";
 import { Address, decodeEventLog } from "viem";
 import { z } from "zod";
-import { bountyAbi } from "../lib/constants";
+import { activeChain, bountyAbi } from "../lib/constants";
 import { completeBounty } from "../lib/queries";
 import { isZeroAddress } from "../lib/utils";
 
@@ -21,7 +21,7 @@ const postSchema = z.object({
 export const post = async ({ request }: { request: NextRequest }) => {
   const formData = await request.json();
   const { hash, bountyId, submissionId } = postSchema.parse(formData);
-  const txReceipt = await arbitrumSepoliaPublicClient.getTransactionReceipt({
+  const txReceipt = await getPublicClient(activeChain).getTransactionReceipt({
     hash,
   });
   const logs = txReceipt.logs;

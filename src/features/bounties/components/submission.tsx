@@ -140,9 +140,6 @@ export function SubmissionCard({
       {
         onSuccess: async (txHash: Address) => {
           const data = { bountyId, submissionId, hash: txHash };
-          alert("I will cancel anyway");
-          console.log({ data });
-          return;
           await updateBounty(data);
           queryClient.invalidateQueries({ queryKey: ["bounty", bountyId] });
         },

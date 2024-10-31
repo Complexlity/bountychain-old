@@ -1,5 +1,9 @@
-export const BOUNTY_CONTRACT_ADDRESS =
-  "0x6E46796857a0E061374a0Bcb4Ce01af851773d2A" as const;
+import clientEnv from "@/lib/client-env";
+import { supportedChains } from "@/lib/viem";
+
+export const activeChain = clientEnv.NEXT_PUBLIC_ACTIVE_CHAIN;
+
+export const BOUNTY_CONTRACT_ADDRESS = supportedChains[activeChain];
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
