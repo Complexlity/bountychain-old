@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -20,6 +21,7 @@ export function GradientSpinner(options: Props) {
   return (
     <div
       style={{
+        //@ts-ignore: css variable definition is supported in JSX style
         "--paddingSize": `${outerCirclePadding}px`,
       }}
       className={cn(
@@ -31,6 +33,7 @@ export function GradientSpinner(options: Props) {
     >
       <div
         style={{
+          //@ts-ignore: css variable definition is supported in JSX style
           "--size": `${innerCircleSize}px`,
         }}
         className={cn(`w-[--size] h-[--size] rounded-full bg-white`)}
