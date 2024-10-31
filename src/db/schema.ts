@@ -1,3 +1,4 @@
+import { supportedChains } from "@/lib/viem";
 import { relations } from "drizzle-orm";
 import {
   integer,
@@ -16,6 +17,7 @@ export const bounties = sqliteTable("bounty", {
   title: text().notNull(),
   description: text().notNull(),
   amount: real().notNull(),
+  chainId: integer().notNull().default(supportedChains.arbitrum.chain.id),
   status: text().default("ongoing").notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
