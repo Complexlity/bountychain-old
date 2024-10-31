@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useBounty } from "@/features/bounties/hooks/bounties";
-import { usePayBountyOld } from "@/features/bounties/hooks/use-pay-old";
+import { usePayBounty } from "@/features/bounties/hooks/use-pay-bounty";
 import {
   CreateBountySubmissionSchema,
   WithSignature,
@@ -303,7 +303,7 @@ function PayButton({
   });
   const queryClient = useQueryClient();
 
-  const { isPending, sendPayBountyTransaction: payBounty } = usePayBountyOld(
+  const { isPending, sendPayBountyTransaction: payBounty } = usePayBounty(
     { bountyId, submissionId, winnerAddress, callerAddress },
     {
       onSuccess: async (txHash: Address) => {

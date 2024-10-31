@@ -17,7 +17,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Clock, Loader2, Trophy, User } from "lucide-react";
 import type { Address } from "viem";
 import { useAccount } from "wagmi";
-import { usePayBountyOld } from "../hooks/use-pay-old";
+import { usePayBounty } from "../hooks/use-pay-bounty";
 import { type Submission } from "../lib/types";
 
 interface SubmissionCardProps {
@@ -135,11 +135,15 @@ export function SubmissionCard({
   });
 
   const { sendPayBountyTransaction: payBounty, isPending: isMarking } =
-    usePayBountyOld(
+    usePayBounty(
       { bountyId, submissionId, winnerAddress, callerAddress },
       {
         onSuccess: async (txHash: Address) => {
-          await updateBounty({ bountyId, submissionId, hash: txHash });
+          const data = { bountyId, submissionId, hash: txHash };
+          alert("I will cancel anyway");
+          console.log({ data });
+          return;
+          await updateBounty(data);
           queryClient.invalidateQueries({ queryKey: ["bounty", bountyId] });
         },
         onError: (error) => {

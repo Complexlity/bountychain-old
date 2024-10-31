@@ -1,56 +1,100 @@
-import { useMutation } from "@tanstack/react-query";
-import { Address } from "viem";
-import { useWriteContract } from "wagmi";
-import { arbitrumSepoliaPublicClient } from "@/lib/viem";
-import { bountyAbi } from "../lib/constants";
+import { useEffect } from "react";
+import { Address, isAddress } from "viem";
+import {
+  useAccount,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 
-export const usePayBounty = ({
-  writeContractAsync,
-  onSuccess,
-}: {
-  writeContractAsync: ReturnType<typeof useWriteContract>["writeContractAsync"];
-  onSuccess?: (txHash: Address) => void;
-}) => {
-  return useMutation({
-    mutationFn: async (options: {
-      bountyId: string;
-      winnerAddress: Address;
-      callerAddress: Address;
-    }) => {
-      const { bountyId, winnerAddress, callerAddress } = options;
-      const bountyContractAddress =
-        "0x6E46796857a0E061374a0Bcb4Ce01af851773d2A";
-      console.log("Simulating contract...");
+import { BOUNTY_CONTRACT_ADDRESS, bountyAbi } from "../lib/constants";
+// import { useGasAmountEstimate } from '..';
 
-      const { request } = await arbitrumSepoliaPublicClient.simulateContract({
-        account: callerAddress,
-        address: bountyContractAddress,
-        abi: bountyAbi,
-        functionName: "payBounty",
-        args: [bountyId as Address, winnerAddress],
-      });
+type PayBountyArgs = {
+  bountyId: string;
+  submissionId: number;
+  winnerAddress: Address;
+  callerAddress: Address;
+};
 
-      console.log({ request });
-      if (!request) {
-        throw new Error("Could not simulate contract");
-      }
+export const usePayBounty = (
+  { bountyId, submissionId, winnerAddress, callerAddress }: PayBountyArgs,
+  options?: {
+    onSend?: (txHash: `0x${string}`) => void;
+    onSuccess?: (txHash: Address) => Promise<void>;
+    onError?: (err: unknown) => void;
+  }
+) => {
+  const { chain } = useAccount();
+  const enabled =
+    !!bountyId &&
+    !!winnerAddress &&
+    !!submissionId &&
+    isAddress(winnerAddress) &&
+    isAddress(callerAddress);
+  console.log({ enabled });
 
-      console.log("Writing contract...");
-      const hash = await writeContractAsync(request);
-
-      const receipt =
-        await arbitrumSepoliaPublicClient.waitForTransactionReceipt({
-          hash,
-        });
-      console.log(receipt.transactionHash);
-      return { hash };
-    },
-    onSuccess: (data) => {
-      onSuccess?.(data.hash);
-    },
-    onError: () => {
-      alert("Something went wrong");
-      return;
-    },
+  const { data } = useSimulateContract({
+    chainId: chain?.id,
+    account: callerAddress,
+    address: BOUNTY_CONTRACT_ADDRESS,
+    abi: bountyAbi,
+    functionName: "payBounty",
+    args: [bountyId as Address, winnerAddress],
+    query: { enabled },
   });
+
+  const {
+    data: txHash,
+    isPending: isWaiting,
+    isError: isSendingError,
+    isSuccess: isSendingSuccess,
+    writeContract: _sendPayBountyTransaction,
+  } = useWriteContract();
+
+  const sendPayBountyTransaction =
+    !!data && !!_sendPayBountyTransaction
+      ? () => _sendPayBountyTransaction(data.request)
+      : undefined;
+
+  useEffect(() => {
+    if (!!txHash && isSendingSuccess) {
+      options?.onSend?.(txHash);
+    }
+  }, [isSendingSuccess]);
+
+  const {
+    data: txReceipt,
+    isFetching: isConfirming,
+    isSuccess,
+    isError: isConfirmingError,
+    error,
+  } = useWaitForTransactionReceipt({ chainId: chain?.id, hash: txHash });
+
+  console.log({ isConfirmingError });
+
+  useEffect(() => {
+    if (!!txReceipt && !!txHash && isSuccess) {
+      options?.onSuccess?.(txHash);
+    }
+  }, [isSuccess]);
+
+  const isError = isSendingError || isConfirmingError;
+
+  useEffect(() => {
+    if (isError) {
+      options?.onError?.(error);
+    }
+  }, [isError]);
+  const isPending = isWaiting || isConfirming;
+  return {
+    isPending,
+    isWaiting,
+    isConfirming,
+    isSuccess,
+    isError,
+    txHash,
+    txReceipt,
+    sendPayBountyTransaction,
+  };
 };
