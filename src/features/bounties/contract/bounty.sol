@@ -87,8 +87,8 @@ contract BountyContract is Ownable {
     function payBounty(bytes32 _bountyId, address payable _winner) external {
         Bounty storage bounty = bounties[_bountyId];
         require(
-            bounty.creator == msg.sender,
-            "Only the creator can pay the bounty"
+            msg.sender == bounty.creator || msg.sender == owner(),
+            "Only the creator or contract owner can pay the bounty"
         );
         require(!bounty.isPaid, "Bounty has already been paid");
         require(bounty.amount > 0, "Invalid bounty");
