@@ -2,7 +2,7 @@ import {
   default as abi,
   default as BountyContractABI,
 } from "@/features/bounties/contract/bountyAbi.json";
-import { getPublicClient } from "@/lib/viem";
+import { getPublicClient, supportedChains } from "@/lib/viem";
 import { useMutation } from "@tanstack/react-query";
 import { Address, decodeEventLog, parseEther } from "viem";
 import { useWriteContract } from "wagmi";
@@ -13,15 +13,13 @@ export const useCreateBounty = ({
 }: {
   writeContractAsync: ReturnType<typeof useWriteContract>["writeContractAsync"];
 }) => {
-  const bountyContractAddress = "0x6E46796857a0E061374a0Bcb4Ce01af851773d2A";
-
   return useMutation({
     mutationFn: async (amount: number, tokenType: "ETH" | "USDC" = "ETH") => {
       const isETH = tokenType === "ETH";
       const publicClient = getPublicClient(activeChain);
 
       const { request } = await publicClient.simulateContract({
-        address: bountyContractAddress,
+        address: supportedChains[activeChain].bountyContractAddress,
         abi: BountyContractABI,
         functionName: "createBounty",
         args: [isETH ? 0 : 1, parseEther(`${amount}`)],
