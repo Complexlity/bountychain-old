@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { insertBountiesSchema } from "@/db/schema";
 import { useCreateBounty } from "@/features/bounties/hooks/use-create-bounty";
 import { toast } from "@/hooks/use-toast";
@@ -223,7 +224,7 @@ export function CreateBountyDialog({
                       <FormControl>
                         <Input
                           className="rounded-none"
-                          placeholder="cool title for your bounty"
+                          placeholder="title for your bounty"
                           {...field}
                         />
                       </FormControl>
@@ -238,9 +239,9 @@ export function CreateBountyDialog({
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input
-                          className="rounded-none"
-                          placeholder="give the user some additional information to help"
+                        <Textarea
+                          className="rounded-none min-h-[100px] resize-y"
+                          placeholder="Provide detailed information about your bounty..."
                           {...field}
                         />
                       </FormControl>
