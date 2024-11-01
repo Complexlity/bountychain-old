@@ -7,8 +7,8 @@ import {
   useWriteContract,
 } from "wagmi";
 
-import { activeChain, bountyAbi } from "../lib/constants";
-import { supportedChains } from "@/lib/viem";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
+import { bountyAbi } from "../lib/constants";
 // import { useGasAmountEstimate } from '..';
 
 type PayBountyArgs = {
@@ -26,6 +26,7 @@ export const usePayBounty = (
     onError?: (err: unknown) => void;
   }
 ) => {
+  const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
   const { chain } = useAccount();
   const enabled =
     !!bountyId &&
@@ -38,7 +39,7 @@ export const usePayBounty = (
   const { data } = useSimulateContract({
     chainId: chain?.id,
     account: callerAddress,
-    address: supportedChains[activeChain].contractAddress,
+    address: supportedChains[activeChain].bountyContractAddress,
     abi: bountyAbi,
     functionName: "payBounty",
     args: [bountyId as Address, winnerAddress],

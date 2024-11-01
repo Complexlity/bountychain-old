@@ -1,10 +1,14 @@
-import { http, createConfig } from "wagmi";
-import { arbitrumSepolia } from "wagmi/chains";
+import { createConfig, http } from "wagmi";
+import { supportedChains, SupportedChainKey } from "./viem";
+
+const activeChain =
+  supportedChains[process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey];
 
 export const wagmiConfig = createConfig({
-  chains: [arbitrumSepolia],
+  chains: [activeChain.chain],
+  //@ts-expect-error: This is valid
   transports: {
-    [arbitrumSepolia.id]: http(),
+    [activeChain.chain.id]: http(),
   },
 });
 

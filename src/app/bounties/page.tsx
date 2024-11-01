@@ -17,11 +17,18 @@ import { CreateBountyDialog } from "@/features/bounties/components/create-bounty
 import { useBounties } from "@/features/bounties/hooks/bounties";
 import { GradientSpinner } from "@/components/ui/gradient-spinner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 
 export default function BountiesPage() {
   const { data, isPending } = useBounties();
   const [status, setStatus] = useState("ongoing");
-  const filteredBounties = data?.filter((bounty) => bounty.status === status);
+
+  const activeChainId =
+    supportedChains[process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey]
+      .chain.id;
+  const filteredBounties = data?.filter(
+    (bounty) => bounty.status === status && bounty.chainId === activeChainId
+  );
 
   return (
     <MaxWidthWrapper className="relative max-w-[1200px] py-8 flex-1 flex flex-col">

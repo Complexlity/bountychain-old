@@ -20,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { insertBountiesSchema } from "@/db/schema";
 import { useCreateBounty } from "@/features/bounties/hooks/use-create-bounty";
 import { toast } from "@/hooks/use-toast";
-import clientEnv from "@/lib/client-env";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -75,7 +74,7 @@ export function CreateBountyDialog({
   const { mutate: sendDataToBackupServer } = useMutation({
     mutationKey: ["backupBounty"],
     mutationFn: async (data: CreateBountySchema) => {
-      const baseUrl = clientEnv.NEXT_PUBLIC_BACKUP_SERVER;
+      const baseUrl = process.env.NEXT_PUBLIC_BACKUP_SERVER;
       const res = await fetch(`${baseUrl}/bounties`, {
         method: "POST",
         headers: {

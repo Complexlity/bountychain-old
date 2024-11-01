@@ -12,7 +12,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
-import clientEnv from "@/lib/client-env";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Clock, Loader2, Trophy, User } from "lucide-react";
 import type { Address } from "viem";
@@ -64,7 +63,7 @@ export function SubmissionCard({
       hash: string;
     }) => {
       const res = await fetch(
-        `${clientEnv.NEXT_PUBLIC_BACKUP_SERVER}/bounties/complete`,
+        `${process.env.NEXT_PUBLIC_BACKUP_SERVER}/bounties/complete`,
         {
           method: "POST",
           headers: {

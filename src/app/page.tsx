@@ -4,8 +4,7 @@ import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { GlareCard } from "@/components/ui/glare-card";
 import { useBounties } from "@/features/bounties/hooks/bounties";
-import { Award, Search, Wallet } from "lucide-react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Award, Search, Wallet } from "lucide-react";
 
 import {
   Accordion,
@@ -22,6 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { GradientSpinner } from "@/components/ui/gradient-spinner";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 import Link from "next/link";
 
 export default function Page() {
@@ -150,8 +150,13 @@ function OngoingBounties() {
   if (!data || data.length === 0) {
     return null;
   }
+  const activeChainId =
+    supportedChains[process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey]
+      .chain.id;
 
-  const ongoingBounties = data.filter((bounty) => bounty.status === "ongoing");
+  const ongoingBounties = data.filter(
+    (bounty) => bounty.status === "ongoing" && bounty.chainId === activeChainId
+  );
 
   return (
     <section className="w-full py-12">

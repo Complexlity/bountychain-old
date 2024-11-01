@@ -1,17 +1,25 @@
-"server-only";
-
-import { z } from "zod";
 import { Prettify } from "./types";
+import { z } from "zod";
+import { SupportedChainKey, supportedChains } from "./viem";
 
 const Dialect = z.enum(["sqlite", "turso"]);
 type Dialect = Prettify<z.infer<typeof Dialect>>;
-
+console.log({ env: process.env });
 const serverEnvSchema = z
   .object({
     NODE_ENV: z.string().default("development"),
     DATABASE_URL: z.string().url(),
     DATABASE_AUTH_TOKEN: z.string().optional(),
     DIALECT: Dialect.optional(),
+    NEXT_PUBLIC_BACKUP_SERVER: z.string().url().optional(),
+    NEXT_PUBLIC_ACTIVE_CHAIN: z
+      .string()
+      .default("arbitrum")
+      .refine((val): val is SupportedChainKey => val in supportedChains, {
+        message:
+          "ACTIVE_CHAIN must be one of the supported chains: " +
+          Object.keys(supportedChains).join(", "),
+      }),
   })
   .superRefine((input, ctx) => {
     if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {

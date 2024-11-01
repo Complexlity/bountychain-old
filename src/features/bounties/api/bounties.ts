@@ -1,10 +1,11 @@
 import { getPublicClient, supportedChains } from "@/lib/viem";
 import { NextRequest } from "next/server";
 import { Address } from "viem";
-import { activeChain, bountyAbi } from "../lib/constants";
+import { bountyAbi } from "../lib/constants";
 import { createBounty, getBounties } from "../lib/queries";
 import { CreateBountySchema } from "../lib/types";
 import { isZeroAddress } from "../lib/utils";
+import serverEnv from "@/lib/server-env";
 
 export async function get() {
   const bounties = await getBounties();
@@ -13,8 +14,9 @@ export async function get() {
 
 export async function post({ request }: { request: NextRequest }) {
   const formData = (await request.json()) as CreateBountySchema;
+  const activeChain = serverEnv.NEXT_PUBLIC_ACTIVE_CHAIN;
   const bountyDetails = await getPublicClient(activeChain).readContract({
-    address: supportedChains[activeChain].contractAddress,
+    address: supportedChains[activeChain].bountyContractAddress,
     abi: bountyAbi,
     functionName: "getBountyInfo",
     args: [formData.id as Address],

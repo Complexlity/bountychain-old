@@ -1,9 +1,7 @@
-import clientEnv from "@/lib/client-env";
 import { supportedChains } from "@/lib/viem";
 
-export const activeChain = clientEnv.NEXT_PUBLIC_ACTIVE_CHAIN;
-
-export const BOUNTY_CONTRACT_ADDRESS = supportedChains[activeChain];
+export const BOUNTY_CONTRACT_ADDRESS =
+  supportedChains["arbitrum"].bountyContractAddress;
 
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
