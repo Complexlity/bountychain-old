@@ -4,7 +4,6 @@ import { SupportedChainKey, supportedChains } from "./viem";
 
 const Dialect = z.enum(["sqlite", "turso"]);
 type Dialect = Prettify<z.infer<typeof Dialect>>;
-console.log({ env: process.env });
 const serverEnvSchema = z
   .object({
     NODE_ENV: z.string().default("development"),

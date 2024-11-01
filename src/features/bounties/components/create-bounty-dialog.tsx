@@ -44,7 +44,7 @@ const formSchema = z.object({
       required_error: "Amount not provided",
       invalid_type_error: "Amount must be a number",
     })
-    .min(0, {
+    .positive({
       message: "Amount must be greater than 0",
     }),
 });
