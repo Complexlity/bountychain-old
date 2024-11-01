@@ -20,51 +20,49 @@ type bounty = {
   createdAt: Date;
 };
 
-export function BountyCard({
-  bounty,
-}: {
-  bounty: bounty;
-}) {
+export function BountyCard({ bounty }: { bounty: bounty }) {
   return (
-    <div className="group relative h-full w-[350px] cursor-pointer">
-      <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-600 to-green-600 opacity-25 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200 ">
-        Hello{" "}
-      </div>
+    <Link href={`/bounty/${bounty.id}`}>
+      <div className="group relative h-full w-[350px] cursor-pointer">
+        <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-600 to-green-600 opacity-25 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200 ">
+          Hello{" "}
+        </div>
 
-      <Card
-        key={bounty.id}
-        className="flex relative h-full flex-col overflow-hidden rounded-none leading-none ring-1 ring-gray-900/5"
-      >
-        <CardHeader className="bg-gradient-to-r from-gray-100 to-gray-50 text-center font-bold">
-          <CardTitle className="text-xl font-bold">{bounty.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-1 flex-col p-6">
-          <p className="mb-4 flex-1 text-gray-700">
-            {bounty.description.length > 200
-              ? bounty.description.slice(0, 200) + "..."
-              : bounty.description}
-          </p>
+        <Card
+          key={bounty.id}
+          className="flex relative h-full flex-col overflow-hidden rounded-none leading-none ring-1 ring-gray-900/5"
+        >
+          <CardHeader className="bg-gradient-to-r from-gray-100 to-gray-50 text-center font-bold">
+            <CardTitle className="text-xl font-bold">{bounty.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-1 flex-col p-6">
+            <p className="mb-4 flex-1 text-gray-700">
+              {bounty.description.length > 200
+                ? bounty.description.slice(0, 200) + "..."
+                : bounty.description}
+            </p>
 
-          <div className="bountys-center flex justify-between">
-            <span className="flex items-center gap-1">
-              <span className="text-3xl font-bold text-green-600">
-                {bounty.amount}
+            <div className="bountys-center flex justify-between">
+              <span className="flex items-center gap-1">
+                <span className="text-3xl font-bold text-green-600">
+                  {bounty.amount}
+                </span>
+                <span>ETH</span>
               </span>
-              <span>ETH</span>
-            </span>
-          </div>
-        </CardContent>
-        <CardFooter className="bg-gray-100 p-4">
-          <Link
-            className={buttonVariants({
-              className: "b mx-auto w-full rounded-none transition-colors",
-            })}
-            href={`/bounty/${bounty.id}`}
-          >
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </CardFooter>
-      </Card>
-    </div>
+            </div>
+          </CardContent>
+          <CardFooter className="bg-gray-100 p-4">
+            <Link
+              className={buttonVariants({
+                className: "b mx-auto w-full rounded-none transition-colors",
+              })}
+              href={`/bounty/${bounty.id}`}
+            >
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+    </Link>
   );
 }
