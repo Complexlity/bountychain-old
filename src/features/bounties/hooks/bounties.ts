@@ -16,7 +16,6 @@ export function useBounties() {
         return [];
       }
     },
-    initialData: [],
   });
 }
 
