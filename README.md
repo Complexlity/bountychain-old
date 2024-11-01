@@ -54,12 +54,11 @@ Currently, it's hosted on Arbitrum and Arbitrum Sepolia networks.
 
 Found in the [src/](/src/features/bounties/contract/bounty.sol)
 
-2. **Frontend and Main Server**:  The site is built with Nextjs which uses React for the frontend and Nodejs for the server routes. The server routes are responsible for saving the bounty details to the database. It's also handle submissions.
+2. **Frontend and Main Server**: The site is built with Nextjs which uses React for the frontend and Nodejs for the server routes. The server routes are responsible for saving the bounty details to the database. It's also handle submissions.
 
 3. **Main Database**: The database is a SQLite database. Currently, it's hosted on [turso](https://turso.tech/) but can be run locally. It's responsible for storing the bounty details and submissions.
 
-
-4. **Backup Server and Database**: Since the entire bounty details is not stored on the blockchain, there's always a risk of users losing funds if they create a bounty and then the main server or main database goes down or errors while the bounty is already created on the blockchain, it would be a problem. 
+4. **Backup Server and Database**: Since the entire bounty details is not stored on the blockchain, there's always a risk of users losing funds if they create a bounty and then the main server or main database goes down or errors while the bounty is already created on the blockchain, it would be a problem.
 
 The backup server is resonsible for storing bounty details of failed transactions. It runs a cron job every hour to check for failed transactions and store them in the main database.
 
@@ -67,10 +66,15 @@ The backup server is resonsible for storing bounty details of failed transaction
 
 For Full Explanation on Usage and Architecture, please refer to the Video Demo - 👉 [Loom Video](https://www.loom.com/share/3d4e5fcebaf247cc839f9708d061b536?sid=a44a098f-a308-45ca-bcfb-1fde3f04512c)
 
-
 ## Improvements
+
 <!-- Add a markdown checkbox for some features improvements -->
+
 - [ ] Withdraw / Cancel A Bounty
 - [ ] Support for ERC20 tokens like USDC
 - [ ] Token Prices In USD
 - [ ] Bounty Deadline and Expiry
+- [ ] Adding images
+  - [ ] For bounty description
+  - [ ] For bounty submission
+- [ ] Rich text support for description
