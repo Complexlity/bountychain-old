@@ -7,6 +7,6 @@ export const GET = async () => {
 };
 
 export const POST = async (request: NextRequest) => {
-  const res = post({ request });
+  const res = await post({ request });
   return new Response(JSON.stringify(res));
 };

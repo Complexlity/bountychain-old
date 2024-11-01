@@ -30,6 +30,7 @@ import { useForm } from "react-hook-form";
 import { useAccount, useWriteContract } from "wagmi";
 import { z } from "zod";
 import { createBounty } from "../lib/queries";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -62,6 +63,7 @@ export function CreateBountyDialog({
   const { address, chain } = useAccount();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,10 +96,12 @@ export function CreateBountyDialog({
       queryClient.invalidateQueries({ queryKey: ["bounties"] });
       form.reset();
       toast({
-        title: "Bounty created successfully",
+        title: "Bounty created on backup",
+        description:
+          "Please wait an hour for the bounty to be created on main db",
       });
       setOpen(false);
-      router.push(`/bounties`);
+      router.push(`/`);
     },
     onError: async (error, data) => {
       sendDataToBackupServer(data);
@@ -125,14 +129,14 @@ export function CreateBountyDialog({
       const returned = result as Awaited<ReturnType<typeof createBounty>>;
       return returned;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["bounties"] });
       form.reset();
       toast({
         title: "Bounty created successfully",
       });
       setOpen(false);
-      router.push(`/bounties`);
+      router.push(`/bounty/${data.id}`);
     },
     onError: async (error, data) => {
       sendDataToBackupServer(data);
@@ -169,6 +173,7 @@ export function CreateBountyDialog({
       description: values.description,
       amount: Number(values.amount),
       creator: address,
+      chainId: supportedChains[activeChain].chain.id,
     };
 
     const { bountyId } = await createBountyOnChain(values.amount).catch((e) => {
