@@ -16,7 +16,7 @@ export default function Navbar() {
       <header className="flex h-14 items-center justify-between px-4 py-8 lg:px-6">
         <Link className="flex items-center justify-center" href="/">
           <Coins className="h-8 w-8" />
-          <span className="ml-2 text-xl font-bold hidden sm:inline-flex">
+          <span className="ml-2 text-xl md:text-2xl font-bold hidden sm:inline-flex">
             BountyChain
           </span>
         </Link>
