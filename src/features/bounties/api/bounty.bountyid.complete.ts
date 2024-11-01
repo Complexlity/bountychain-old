@@ -2,9 +2,10 @@ import { getPublicClient } from "@/lib/viem";
 import { NextRequest } from "next/server";
 import { Address, decodeEventLog } from "viem";
 import { z } from "zod";
-import { activeChain, bountyAbi } from "../lib/constants";
+import { bountyAbi } from "../lib/constants";
 import { completeBounty } from "../lib/queries";
 import { isZeroAddress } from "../lib/utils";
+import serverEnv from "@/lib/server-env";
 
 const postSchema = z.object({
   hash: z
@@ -21,7 +22,9 @@ const postSchema = z.object({
 export const post = async ({ request }: { request: NextRequest }) => {
   const formData = await request.json();
   const { hash, bountyId, submissionId } = postSchema.parse(formData);
-  const txReceipt = await getPublicClient(activeChain).getTransactionReceipt({
+  const txReceipt = await getPublicClient(
+    serverEnv.NEXT_PUBLIC_ACTIVE_CHAIN
+  ).getTransactionReceipt({
     hash,
   });
   const logs = txReceipt.logs;

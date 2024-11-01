@@ -10,7 +10,7 @@ import type {
 import { NextRequest } from "next/server";
 import { insertSubmissionsSchema } from "@/db/schema";
 import { getPublicClient } from "@/lib/viem";
-import { activeChain } from "../lib/constants";
+import serverEnv from "@/lib/server-env";
 
 export async function get({ params }: { params: { bountyId: string } }) {
   // Handle GET request
@@ -26,13 +26,15 @@ export async function post({ request }: { request: NextRequest }) {
   if (!signature || !isAddress(address)) {
     return { message: "Signature or Address Invalid" };
   }
-  const isValid = await getPublicClient(activeChain).verifyMessage({
+  const isValid = await getPublicClient(
+    serverEnv.NEXT_PUBLIC_ACTIVE_CHAIN
+  ).verifyMessage({
     address,
     message: JSON.stringify(message),
     signature,
   });
   if (!isValid) {
-    return { message: "Invalid signature", status: 422 };
+    return { message: "Invalid signature", status: 403 };
   }
   const { success, error } = insertSubmissionsSchema.safeParse(formData);
   if (!success) {

@@ -2,11 +2,14 @@ import {
   default as abi,
   default as BountyContractABI,
 } from "@/features/bounties/contract/bountyAbi.json";
-import { getPublicClient, supportedChains } from "@/lib/viem";
+import {
+  getPublicClient,
+  SupportedChainKey,
+  supportedChains,
+} from "@/lib/viem";
 import { useMutation } from "@tanstack/react-query";
 import { Address, decodeEventLog, parseEther } from "viem";
 import { useWriteContract } from "wagmi";
-import { activeChain } from "../lib/constants";
 
 export const useCreateBounty = ({
   writeContractAsync,
@@ -16,6 +19,8 @@ export const useCreateBounty = ({
   return useMutation({
     mutationFn: async (amount: number, tokenType: "ETH" | "USDC" = "ETH") => {
       const isETH = tokenType === "ETH";
+      const activeChain = process.env
+        .NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
       const publicClient = getPublicClient(activeChain);
 
       const { request } = await publicClient.simulateContract({
