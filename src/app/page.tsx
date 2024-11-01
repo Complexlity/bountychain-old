@@ -2,16 +2,17 @@
 
 import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { BackgroundLines } from "@/components/ui/background-lines";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GlareCard } from "@/components/ui/glare-card";
-// import { BountyCard } from "@/features/bounties/components/bounty-card";
-// import { CreateBountyDialog } from "@/features/bounties/components/create-bounty-dialog";
 import { useBounties } from "@/features/bounties/hooks/bounties";
 import { Award, Search, Wallet } from "lucide-react";
-// import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-import Link from "next/link";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -20,12 +21,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { GradientSpinner } from "@/components/ui/gradient-spinner";
+import Link from "next/link";
 
 export default function Page() {
   return (
@@ -149,10 +146,12 @@ function Features() {
 }
 
 function OngoingBounties() {
-  const { data } = useBounties();
+  const { data, isLoading } = useBounties();
   if (!data || data.length === 0) {
     return null;
   }
+
+  const ongoingBounties = data.filter((bounty) => bounty.status === "ongoing");
 
   return (
     <section className="w-full py-12">
@@ -160,8 +159,17 @@ function OngoingBounties() {
         <h2 className="pb-12 text-center text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
           Featured Bounties
         </h2>
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center">
+            <GradientSpinner />
+            <p>Loading featured bounties...</p>
+          </div>
+        )}
         <div className="mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {data.length > 0 && <BountyCard bounty={data[0]} />}
+          {ongoingBounties.length > 0 &&
+            ongoingBounties.map((bounty) => (
+              <BountyCard bounty={bounty} key={bounty.id} />
+            ))}
         </div>
       </MaxWidthWrapper>
     </section>

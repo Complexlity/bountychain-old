@@ -25,7 +25,7 @@ export function GradientSpinner(options: Props) {
         "--paddingSize": `${outerCirclePadding}px`,
       }}
       className={cn(
-        `p-[--paddingSize] bg-gradient-to-tr animate-spin rounded-full `,
+        `p-[--paddingSize] bg-gradient-to-tr animate-spin rounded-full w-fit h-fit`,
         from,
         to,
         via
