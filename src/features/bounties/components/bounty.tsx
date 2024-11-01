@@ -3,13 +3,13 @@
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Separator } from "@/components/ui/separator";
-import { User } from "lucide-react";
+import { ArrowLeft, User } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { type Bounty } from "../lib/types";
 import { SubmissionCard } from "./submission";
 import { SubmitSolution } from "./submission-form";
-
 export function Bounty({ bounty }: { bounty: Bounty }) {
   const [expandedSubmissionIndex, setExpandedSubmissionIndex] = useState<
     number | null
@@ -39,8 +39,16 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
     <div className="w-full max-w-3xl mx-auto bg-background/50 backdrop-blur-sm rounded-lg">
       <div className="p-8 flex flex-col gap-8">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold tracking-tight">
+          <div className="flex items-center justify-between relative ">
+            <div className="flex items-center justify-center absolute top-[60%] -left-7 -translate-y-1/2 md:-left-14">
+              <Link href="/bounties">
+                <button>
+                  <ArrowLeft className="md:h-8 md:w-8" />
+                  <span className="sr-only">Back to bounties</span>
+                </button>
+              </Link>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
               {bounty.title}
             </h1>
             <Badge
