@@ -1,48 +1,21 @@
-"use client";
+import { getBounty } from "@/features/bounties/lib/queries";
+import SingleBounty from "./single-bounty";
 
-import { GradientSpinner } from "@/components/ui/gradient-spinner";
-import { Bounty } from "@/features/bounties/components/bounty";
-import { useBounty } from "@/features/bounties/hooks/bounties";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import invariant from "tiny-invariant";
+export async function generateMetadata({
+  params,
+}: {
+  params: { bountyId: string };
+}) {
+  const { bountyId } = params;
+  if (!bountyId) return null;
+  const bounty = await getBounty(bountyId);
+  if (!bounty) return null;
+  return {
+    title: bounty?.title,
+    description: bounty?.description,
+  };
+}
 
 export default function Page({ params }: { params: { bountyId: string } }) {
-  const { bountyId } = params;
-  const router = useRouter();
-  invariant(bountyId, "Bounty Id is not defined");
-
-  const { data: bounty, isLoading, isError } = useBounty(bountyId);
-
-  useEffect(() => {
-    if (!bountyId) {
-      router.push("/bounties");
-      return;
-    }
-  }, [bountyId, router]);
-
-  useEffect(() => {
-    if (!isLoading && (!bounty || isError)) {
-      router.push("/bounties");
-    }
-  }, [isLoading, bounty, isError, router]);
-
-  if (!bountyId || isLoading) {
-    return (
-      <div className="flex flex-col gap-8 items-center justify-center  flex-1">
-        <GradientSpinner />
-        <p>Getting Bounty...</p>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return <div></div>;
-  }
-
-  if (!bounty) {
-    return <div></div>;
-  }
-
-  return <Bounty bounty={bounty} />;
+  return <SingleBounty params={params} />;
 }
