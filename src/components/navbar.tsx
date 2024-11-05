@@ -91,8 +91,8 @@ const MobileNavbar = (props: MobileNavbarProps) => {
   return (
     <div
       className={cn(
-        "fixed bg-white bottom-0 flex w-full h-[60px] justify-center items-center gap-6 md:hidden",
-        "bg-pt-purple-600 border-t-2 border-pt-purple-500",
+        "fixed  bottom-0 flex w-full h-[60px] justify-center items-center gap-6 md:hidden",
+        "bg-pt-purple-600 border-t-2 border-pt-purple-500 bg-white",
         className
       )}
     >
