@@ -122,13 +122,24 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
                 required
                 className="min-h-[100px]"
               />
-              <Button
-                className="w-full"
-                size="lg"
-                isLoading={isPending || isSigning}
-              >
-                Submit Solution
-              </Button>
+              {!address ? (
+                <Button
+                  type="button"
+                  className="w-full"
+                  size="lg"
+                  onClick={() => openConnectModal?.()}
+                >
+                  Connect Wallet
+                </Button>
+              ) : (
+                <Button
+                  className="w-full"
+                  size="lg"
+                  isLoading={isPending || isSigning}
+                >
+                  Submit Solution
+                </Button>
+              )}
             </div>
           </form>
         </CardContent>
