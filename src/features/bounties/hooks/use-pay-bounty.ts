@@ -8,7 +8,6 @@ import {
 } from "wagmi";
 
 import { SupportedChainKey, supportedChains } from "@/lib/viem";
-import { bountyAbi } from "../lib/constants";
 // import { useGasAmountEstimate } from '..';
 
 type PayBountyArgs = {
@@ -16,10 +15,17 @@ type PayBountyArgs = {
   submissionId: number;
   winnerAddress: Address;
   callerAddress: Address;
+  tokenType: keyof (typeof supportedChains)[SupportedChainKey]["contracts"];
 };
 
 export const usePayBounty = (
-  { bountyId, submissionId, winnerAddress, callerAddress }: PayBountyArgs,
+  {
+    bountyId,
+    submissionId,
+    winnerAddress,
+    callerAddress,
+    tokenType,
+  }: PayBountyArgs,
   options?: {
     onSend?: (txHash: `0x${string}`) => void;
     onSuccess?: (txHash: Address) => Promise<void>;
@@ -36,10 +42,13 @@ export const usePayBounty = (
     isAddress(callerAddress);
   console.log({ enabled });
 
+  const { address: contractAddress, abi: bountyAbi } =
+    supportedChains[activeChain].contracts[tokenType];
+
   const { data } = useSimulateContract({
     chainId: chain?.id,
     account: callerAddress,
-    address: supportedChains[activeChain].bountyContractAddress,
+    address: contractAddress,
     abi: bountyAbi,
     functionName: "payBounty",
     args: [bountyId as Address, winnerAddress],

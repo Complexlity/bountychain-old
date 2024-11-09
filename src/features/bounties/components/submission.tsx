@@ -18,10 +18,12 @@ import type { Address } from "viem";
 import { useAccount } from "wagmi";
 import { usePayBounty } from "../hooks/use-pay-bounty";
 import { type Submission } from "../lib/types";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 
 interface SubmissionCardProps {
   submission: Submission;
   callerAddress: Address;
+  tokenType: keyof (typeof supportedChains)[SupportedChainKey]["contracts"];
   isExpanded: boolean;
   onToggle: () => void;
   isCreator: boolean;
@@ -33,6 +35,7 @@ const MAX_LENGTH = 200;
 
 export function SubmissionCard({
   callerAddress,
+  tokenType,
   submission,
   isExpanded,
   onToggle,
@@ -104,6 +107,7 @@ export function SubmissionCard({
       bountyId: string;
       submissionId: number;
       hash: string;
+      tokenType: keyof (typeof supportedChains)[SupportedChainKey]["contracts"];
     }) => {
       const res = await fetch(`/api/bounty/${bountyId}/complete`, {
         method: "POST",
@@ -114,6 +118,7 @@ export function SubmissionCard({
           hash,
           submissionId,
           bountyId,
+          tokenType,
         }),
       });
       const result = await res.json();
@@ -135,10 +140,10 @@ export function SubmissionCard({
 
   const { sendPayBountyTransaction: payBounty, isPending: isMarking } =
     usePayBounty(
-      { bountyId, submissionId, winnerAddress, callerAddress },
+      { bountyId, submissionId, winnerAddress, callerAddress, tokenType },
       {
         onSuccess: async (txHash: Address) => {
-          const data = { bountyId, submissionId, hash: txHash };
+          const data = { bountyId, submissionId, hash: txHash, tokenType };
           await updateBounty(data);
           queryClient.invalidateQueries({ queryKey: ["bounty", bountyId] });
         },

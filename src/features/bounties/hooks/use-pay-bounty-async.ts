@@ -6,7 +6,6 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { Address } from "viem";
 import { useWriteContract } from "wagmi";
-import { bountyAbi } from "../lib/constants";
 
 export const usePayBountyAsync = ({
   writeContractAsync,
@@ -20,15 +19,18 @@ export const usePayBountyAsync = ({
       bountyId: string;
       winnerAddress: Address;
       callerAddress: Address;
+      tokenType: keyof (typeof supportedChains)[SupportedChainKey]["contracts"];
     }) => {
       const { bountyId, winnerAddress, callerAddress } = options;
       const activeChain = process.env
         .NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
       const publicClient = getPublicClient(activeChain);
+      const { address: contractAddress, abi: bountyAbi } =
+        supportedChains[activeChain].contracts[options.tokenType];
 
       const { request } = await publicClient.simulateContract({
         account: callerAddress,
-        address: supportedChains[activeChain].bountyContractAddress,
+        address: contractAddress,
         abi: bountyAbi,
         functionName: "payBounty",
         args: [bountyId as Address, winnerAddress],

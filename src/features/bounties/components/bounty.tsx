@@ -10,6 +10,7 @@ import { useAccount } from "wagmi";
 import { type Bounty } from "../lib/types";
 import { SubmissionCard } from "./submission";
 import { SubmitSolution } from "./submission-form";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 export function Bounty({ bounty }: { bounty: Bounty }) {
   const [expandedSubmissionIndex, setExpandedSubmissionIndex] = useState<
     number | null
@@ -112,6 +113,9 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
               <div className="">
                 <SubmissionCard
                   callerAddress={address!}
+                  tokenType={
+                    bounty.token as keyof (typeof supportedChains)[SupportedChainKey]["contracts"]
+                  }
                   submission={userSubmission}
                   isExpanded={
                     expandedSubmissionIndex ===
@@ -137,6 +141,9 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
                         key={index}
                         callerAddress={address!}
                         submission={submission}
+                        tokenType={
+                          bounty.token as keyof (typeof supportedChains)[SupportedChainKey]["contracts"]
+                        }
                         isExpanded={
                           expandedSubmissionIndex ===
                           submissions.indexOf(submission)
