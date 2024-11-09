@@ -71,7 +71,7 @@ For Full Explanation on Usage and Architecture, please refer to the Video Demo -
 <!-- Add a markdown checkbox for some features improvements -->
 
 - [ ] Withdraw / Cancel A Bounty
-- [ ] Support for ERC20 tokens like USDC
+- [x] Support for ERC20 tokens like USDC
 - [ ] Token Prices In USD
 - [ ] Bounty Deadline and Expiry
 - [ ] Adding images
