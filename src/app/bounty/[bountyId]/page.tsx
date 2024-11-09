@@ -11,7 +11,7 @@ export async function generateMetadata({
   const bounty = await getBounty(bountyId);
   if (!bounty) return null;
   return {
-    title: `${bounty?.title}: ${bounty.amount} ETH`,
+    title: `${bounty?.title}: ${bounty.amount} ${bounty.token.toUpperCase()}`,
     description: bounty?.description,
   };
 }
