@@ -24,7 +24,7 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
     );
   };
 
-  const submissions = bounty.submissions;
+  const submissions = bounty.submissions ?? [];
   const userHasSubmitted = submissions.some(
     (submission) => submission.creator === address
   );
@@ -78,7 +78,7 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-2xl font-bold text-emerald-500">
-              {bounty.amount} ETH
+              {bounty.amount} {bounty.token.toUpperCase()}
             </span>
             <Badge
               variant="outline"

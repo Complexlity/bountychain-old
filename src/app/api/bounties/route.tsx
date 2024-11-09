@@ -8,5 +8,11 @@ export const GET = async () => {
 
 export const POST = async (request: NextRequest) => {
   const res = await post({ request });
+  if ("statusCode" in res && res.statusCode) {
+    const { statusCode, ...rest } = res;
+    return new Response(JSON.stringify(rest), {
+      status: statusCode,
+    });
+  }
   return new Response(JSON.stringify(res));
 };

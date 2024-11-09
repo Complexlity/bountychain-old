@@ -1,8 +1,3 @@
-import { supportedChains } from "@/lib/viem";
-
-export const BOUNTY_CONTRACT_ADDRESS =
-  supportedChains["arbitrum"].bountyContractAddress;
-
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export const bountyAbi = [

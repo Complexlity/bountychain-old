@@ -16,6 +16,7 @@ export const bounties = sqliteTable("bounty", {
   creator: text().notNull(),
   title: text().notNull(),
   description: text().notNull(),
+  token: text().notNull().default("eth"),
   amount: real().notNull(),
   chainId: integer().notNull().default(supportedChains.arbitrum.chain.id),
   status: text().default("ongoing").notNull(),

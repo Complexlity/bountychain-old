@@ -18,6 +18,7 @@ type bounty = {
   description: string;
   amount: number;
   createdAt: Date;
+  token: string;
 };
 
 export function BountyCard({ bounty }: { bounty: bounty }) {
@@ -47,7 +48,7 @@ export function BountyCard({ bounty }: { bounty: bounty }) {
                 <span className="text-3xl font-bold text-green-600">
                   {bounty.amount}
                 </span>
-                <span>ETH</span>
+                <span>{bounty.token.toUpperCase()}</span>
               </span>
             </div>
           </CardContent>

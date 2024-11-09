@@ -17,20 +17,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { insertBountiesSchema } from "@/db/schema";
-import { useCreateBounty } from "@/features/bounties/hooks/use-create-bounty";
+import { useCreateBountyNative } from "@/features/bounties/hooks/use-create-bounty-native";
 import { toast } from "@/hooks/use-toast";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAccount, useWriteContract } from "wagmi";
+import { Address, erc20Abi, parseUnits } from "viem";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { z } from "zod";
+import { useApproveToken } from "../hooks/use-approve-token";
+import { useCreateBountyErc20 } from "../hooks/use-create-bounty-erc20";
 import { createBounty } from "../lib/queries";
-import { SupportedChainKey, supportedChains } from "@/lib/viem";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -47,6 +57,9 @@ const formSchema = z.object({
     .positive({
       message: "Amount must be greater than 0",
     }),
+  currency: z.string({
+    required_error: "Please select a currency",
+  }),
 });
 
 type CreateBountySchema = z.infer<typeof insertBountiesSchema>;
@@ -63,14 +76,45 @@ export function CreateBountyDialog({
   const { address, chain } = useAccount();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       description: "",
       amount: 0,
+      currency: undefined,
+    },
+  });
+
+  const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
+  const currentChain = supportedChains[activeChain];
+  const supportedTokens = Object.keys(
+    currentChain.contracts
+  ) as (keyof (typeof supportedChains)[SupportedChainKey]["contracts"])[];
+  const {} = currentChain.contracts;
+  const currentCurrency = form.getValues().currency as
+    | "eth"
+    | "usdc"
+    | undefined;
+  const chainContract = currentChain.contracts[currentCurrency ?? "eth"];
+
+  const isNotEth = !!(
+    form.getValues().amount &&
+    currentCurrency &&
+    currentCurrency !== "eth"
+  );
+
+  const {
+    data: allowance,
+    isLoading: isGettingAllowance,
+    refetch: refetchAllowance,
+  } = useReadContract({
+    abi: erc20Abi,
+    address: chainContract?.token,
+    functionName: "allowance",
+    args: [address as Address, chainContract?.address],
+    query: {
+      enabled: isNotEth && !!address,
     },
   });
 
@@ -127,6 +171,7 @@ export function CreateBountyDialog({
         throw result;
       }
       const returned = result as Awaited<ReturnType<typeof createBounty>>;
+      console.log({ returned });
       return returned;
     },
     onSuccess: (data) => {
@@ -151,9 +196,17 @@ export function CreateBountyDialog({
   const { writeContractAsync } = useWriteContract();
 
   const {
-    mutateAsync: createBountyOnChain,
-    isPending: isCreatingBountyOnchain,
-  } = useCreateBounty({
+    mutateAsync: createBountyOnChainNative,
+    isPending: isCreatingBountyOnchainNative,
+  } = useCreateBountyNative({
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-expect-error
+    writeContractAsync,
+  });
+  const {
+    mutateAsync: createBountyOnChainErc20,
+    isPending: isCreatingBountyOnchainErc20,
+  } = useCreateBountyErc20({
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-expect-error
     writeContractAsync,
@@ -168,15 +221,32 @@ export function CreateBountyDialog({
       setOpen(false);
       return;
     }
+    if (!currentCurrency) {
+      toast({
+        title: "Please select a currency",
+        variant: "destructive",
+      });
+      setOpen(false);
+      return;
+    }
     const bountyData = {
       title: values.title,
       description: values.description,
       amount: Number(values.amount),
+      token: currentCurrency,
       creator: address,
       chainId: supportedChains[activeChain].chain.id,
     };
 
-    const { bountyId } = await createBountyOnChain(values.amount).catch((e) => {
+    const createBountyOnChain =
+      currentCurrency === "eth"
+        ? createBountyOnChainNative
+        : createBountyOnChainErc20;
+
+    const { bountyId } = await createBountyOnChain({
+      amount: values.amount,
+      tokenType: currentCurrency,
+    }).catch((e) => {
       toast({
         title: "Something went wrong creating bounty",
         description: e.message,
@@ -185,11 +255,34 @@ export function CreateBountyDialog({
       return { bountyId: null, hash: null };
     });
 
+    console.log({ bountyId });
+
     if (bountyId) {
       const data: CreateBountySchema = { ...bountyData, id: bountyId };
       sendDataToDb(data);
     }
   };
+
+  const { sendApproveTransaction, isConfirming, isWaiting } = useApproveToken(
+    activeChain,
+    currentCurrency,
+    form.getValues().amount,
+    {
+      onSuccess: () => {
+        refetchAllowance();
+      },
+    }
+  );
+
+  const hasEnoughAllowance =
+    allowance &&
+    Number(allowance) >=
+      Number(parseUnits(`${form.getValues().amount}`, chainContract?.decimals));
+
+  console.log(
+    allowance,
+    Number(parseUnits(`${form.getValues().amount}`, chainContract?.decimals))
+  );
 
   return (
     <div>
@@ -256,6 +349,39 @@ export function CreateBountyDialog({
                 />
                 <FormField
                   control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Currency</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="rounded-none">
+                            <SelectValue
+                              placeholder="Select currency"
+                              className="text-gray-600 italic "
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {supportedTokens.map((token) => (
+                            <SelectItem
+                              key={`supportedToken-${token}`}
+                              value={token}
+                            >
+                              {token.toUpperCase()}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
@@ -272,13 +398,28 @@ export function CreateBountyDialog({
                     </FormItem>
                   )}
                 />
-                <Button
-                  className="rounded-none"
-                  isLoading={isSendingDataToDb || isCreatingBountyOnchain}
-                  type="submit"
-                >
-                  Submit
-                </Button>
+                {isNotEth && !hasEnoughAllowance ? (
+                  <Button
+                    type="button"
+                    className="rounded-none"
+                    isLoading={isWaiting || isConfirming || isGettingAllowance}
+                    onClick={sendApproveTransaction}
+                  >
+                    Approve {form.getValues().currency.toUpperCase()}
+                  </Button>
+                ) : (
+                  <Button
+                    className="rounded-none"
+                    isLoading={
+                      isSendingDataToDb ||
+                      isCreatingBountyOnchainNative ||
+                      isCreatingBountyOnchainErc20
+                    }
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                )}
               </form>
             </Form>
           </>

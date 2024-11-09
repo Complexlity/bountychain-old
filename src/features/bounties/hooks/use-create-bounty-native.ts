@@ -11,14 +11,23 @@ import { useMutation } from "@tanstack/react-query";
 import { Address, decodeEventLog, parseEther } from "viem";
 import { useWriteContract } from "wagmi";
 
-export const useCreateBounty = ({
+export const useCreateBountyNative = ({
   writeContractAsync,
 }: {
   writeContractAsync: ReturnType<typeof useWriteContract>["writeContractAsync"];
 }) => {
   return useMutation({
-    mutationFn: async (amount: number, tokenType: "ETH" | "USDC" = "ETH") => {
-      const isETH = tokenType === "ETH";
+    mutationFn: async ({
+      amount,
+      tokenType = "eth",
+    }: {
+      amount: number;
+      tokenType: "eth" | "usdc";
+    }) => {
+      if (tokenType !== "eth") {
+        throw new Error("Only eth is supported here");
+      }
+      const isETH = tokenType === "eth";
       const activeChain = process.env
         .NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
       const publicClient = getPublicClient(activeChain);

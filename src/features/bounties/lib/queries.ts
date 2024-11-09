@@ -20,7 +20,6 @@ export async function getBounties() {
 }
 
 export async function createBounty(newBounty: CreateBountySchema) {
-  insertBountiesSchema.parse(newBounty);
   const [insertted] = await db.insert(bounties).values(newBounty).returning();
   return insertted;
 }
