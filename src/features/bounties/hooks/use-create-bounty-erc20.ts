@@ -4,14 +4,8 @@ import {
   supportedChains,
 } from "@/lib/viem";
 import { useMutation } from "@tanstack/react-query";
-import {
-  Address,
-  decodeEventLog,
-  erc20Abi,
-  parseEther,
-  parseUnits,
-} from "viem";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { Address, decodeEventLog, erc20Abi, parseUnits } from "viem";
+import { useAccount, useWriteContract } from "wagmi";
 
 export const useCreateBountyErc20 = ({
   writeContractAsync,
@@ -84,6 +78,7 @@ export const useCreateBountyErc20 = ({
             topics: log.topics,
           });
         } catch (error) {
+          console.log(error);
           console.log("I errrored");
         }
       }

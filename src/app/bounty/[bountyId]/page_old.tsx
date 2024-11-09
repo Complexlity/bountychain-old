@@ -304,7 +304,7 @@ function PayButton({
   const queryClient = useQueryClient();
 
   const { isPending, sendPayBountyTransaction: payBounty } = usePayBounty(
-    { bountyId, submissionId, winnerAddress, callerAddress },
+    { bountyId, submissionId, winnerAddress, callerAddress, tokenType: "eth" },
     {
       onSuccess: async (txHash: Address) => {
         await updateBounty(txHash);
