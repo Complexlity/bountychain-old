@@ -32,7 +32,6 @@ export async function post({ request }: { request: NextRequest }) {
     functionName: "getBountyInfo",
     args: [data.id as Address],
   });
-  console.log({ bountyDetails });
   if (!bountyDetails || isZeroAddress(bountyDetails[0])) {
     return { message: "Bounty not found", statusCode: 400 };
   }

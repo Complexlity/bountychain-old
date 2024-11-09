@@ -10,7 +10,7 @@ import { completeBounty } from "../lib/queries";
 import { isZeroAddress } from "../lib/utils";
 import serverEnv from "@/lib/server-env";
 
-const postSchema = z.object({
+const completeBountySchema = z.object({
   hash: z
     .string()
     .startsWith("0x")
@@ -25,7 +25,8 @@ const postSchema = z.object({
 
 export const post = async ({ request }: { request: NextRequest }) => {
   const formData = await request.json();
-  const { hash, bountyId, submissionId, tokenType } = postSchema.parse(formData);
+  const { hash, bountyId, submissionId, tokenType } =
+    completeBountySchema.parse(formData);
   const activeChain = serverEnv.NEXT_PUBLIC_ACTIVE_CHAIN;
   const txReceipt = await getPublicClient(activeChain).getTransactionReceipt({
     hash,
@@ -49,7 +50,6 @@ export const post = async ({ request }: { request: NextRequest }) => {
       console.log("I errrored");
     }
   }
-
 
   if (
     decoded &&
