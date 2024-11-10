@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useTokenPrice } from "@/hooks/use-token-price";
+import { supportedChains, SupportedChainKey } from "@/lib/viem";
 
 type bounty = {
   id: string;
@@ -22,6 +24,11 @@ type bounty = {
 };
 
 export function BountyCard({ bounty }: { bounty: bounty }) {
+  const { data: tokenPrice } = useTokenPrice({
+    tokenType:
+      bounty.token as keyof (typeof supportedChains)[SupportedChainKey]["contracts"],
+    chain: process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey,
+  });
   return (
     <Link href={`/bounty/${bounty.id}`}>
       <div className="group relative h-full w-[350px] cursor-pointer">
@@ -49,6 +56,11 @@ export function BountyCard({ bounty }: { bounty: bounty }) {
                   {bounty.amount}
                 </span>
                 <span>{bounty.token.toUpperCase()}</span>
+                {tokenPrice && (
+                  <span className="bg-[#191D200f] rounded-sm px-1 py-1 whitespace-nowrap text-[#191D20b3] text-sm font-medium opacity-100">
+                    ({(tokenPrice.usdPrice * bounty.amount).toFixed(2)} USD)
+                  </span>
+                )}
               </span>
             </div>
           </CardContent>

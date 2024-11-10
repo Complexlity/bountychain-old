@@ -48,6 +48,5 @@ export default function SingleBounty({
     return <div></div>;
   }
 
-  <div className="h-60"></div>;
   return <Bounty bounty={bounty} />;
 }

@@ -10,6 +10,7 @@ const serverEnvSchema = z
     DATABASE_URL: z.string().url(),
     DATABASE_AUTH_TOKEN: z.string().optional(),
     DIALECT: Dialect.optional(),
+    MORALIS_API_KEY: z.string(),
     NEXT_PUBLIC_BACKUP_SERVER: z.string().url().optional(),
     NEXT_PUBLIC_ACTIVE_CHAIN: z
       .string()

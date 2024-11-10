@@ -11,6 +11,7 @@ import { type Bounty } from "../lib/types";
 import { SubmissionCard } from "./submission";
 import { SubmitSolution } from "./submission-form";
 import { SupportedChainKey, supportedChains } from "@/lib/viem";
+import { useTokenPrice } from "@/hooks/use-token-price";
 export function Bounty({ bounty }: { bounty: Bounty }) {
   const [expandedSubmissionIndex, setExpandedSubmissionIndex] = useState<
     number | null
@@ -18,6 +19,12 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
   const { address } = useAccount();
   const isCreator = address === bounty.creator;
   const isOngoing = bounty.status === "ongoing";
+
+  const { data: tokenPrice } = useTokenPrice({
+    tokenType:
+      bounty.token as keyof (typeof supportedChains)[SupportedChainKey]["contracts"],
+    chain: process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey,
+  });
 
   const handleSubmissionToggle = (index: number) => {
     setExpandedSubmissionIndex(
@@ -81,6 +88,11 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
             <span className="text-2xl font-bold text-emerald-500">
               {bounty.amount} {bounty.token.toUpperCase()}
             </span>
+            {tokenPrice && (
+              <span className="bg-[#191D200f] rounded-sm px-1 py-[1px] whitespace-nowrap text-[#191D20b3] text-xs font-bold opacity-100">
+                ({(tokenPrice.usdPrice * bounty.amount).toFixed(2)} USD)
+              </span>
+            )}
             <Badge
               variant="outline"
               className="text-emerald-500 border-emerald-500"

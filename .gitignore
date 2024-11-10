@@ -39,3 +39,4 @@ next-env.d.ts
 
 *.sqlite
 contract_test
+TODO.md
