@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Separator } from "@/components/ui/separator";
+import { TruncatedAddress } from "@/components/ui/truncated-address";
 import { ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,6 +13,7 @@ import { SubmissionCard } from "./submission";
 import { SubmitSolution } from "./submission-form";
 import { SupportedChainKey, supportedChains } from "@/lib/viem";
 import { useTokenPrice } from "@/hooks/use-token-price";
+
 export function Bounty({ bounty }: { bounty: Bounty }) {
   const [expandedSubmissionIndex, setExpandedSubmissionIndex] = useState<
     number | null
@@ -45,51 +47,60 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
 
   return (
     <div className="w-full max-w-3xl mx-auto bg-background/50 backdrop-blur-sm rounded-lg">
-      <div className="p-8 flex flex-col gap-8">
+      <div className="p-4 sm:p-8 flex flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between relative ">
-            <div className="flex items-center justify-center absolute top-[60%] -left-7 -translate-y-1/2 md:-left-14">
+          {/* Header with Title and Status */}
+          <div className="flex items-start justify-between relative">
+            <div className="flex items-center justify-center absolute top-[60%] -left-4 sm:-left-7 md:-left-14 -translate-y-1/2">
               <Link href="/bounties">
                 <button>
-                  <ArrowLeft className="md:h-8 md:w-8" />
+                  <ArrowLeft className="h-6 w-6 md:h-8 md:w-8" />
                   <span className="sr-only">Back to bounties</span>
                 </button>
               </Link>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-              {bounty.title}
-            </h1>
+            <div className="flex-1 px-4">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight break-words">
+                {bounty.title}
+              </h1>
+            </div>
             <Badge
               variant={isOngoing ? "default" : "secondary"}
-              className={
+              className={`flex-shrink-0 ${
                 isOngoing
                   ? "bg-blue-500 hover:bg-blue-600"
                   : "bg-green-500 hover:bg-green-600"
-              }
+              }`}
             >
               {bounty.status}
             </Badge>
           </div>
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <User className="h-4 w-4" />
-            <span>Creator</span>
+
+          {/* Creator Info */}
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <div className="flex items-center">
+              <User className="h-4 w-4 mr-2" />
+              <span>Creator</span>
+            </div>
+            <div className="flex items-center gap-2">
               {isCreator ? (
-                <Badge variant="outline" className="ml-2">
-                  You
-                </Badge>
+                <Badge variant="outline">You</Badge>
               ) : (
-                <span className="font-mono">{bounty.creator}</span>
+                <TruncatedAddress address={bounty.creator} />
               )}
-              <CopyButton text={bounty.creator} />
+              <div className="flex-shrink-0">
+                <CopyButton text={bounty.creator} />
+              </div>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-emerald-500">
+
+          {/* Reward Info */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xl sm:text-2xl font-bold text-emerald-500 whitespace-nowrap">
               {bounty.amount} {bounty.token.toUpperCase()}
             </span>
             {tokenPrice && (
-              <span className="bg-[#191D200f] rounded-sm px-1 py-[1px] whitespace-nowrap text-[#191D20b3] text-xs font-bold opacity-100">
+              <span className="bg-[#191D200f] rounded-sm px-1 py-[1px] whitespace-nowrap text-[#191D20b3] text-xs font-bold">
                 ({(tokenPrice.usdPrice * bounty.amount).toFixed(2)} USD)
               </span>
             )}
@@ -103,11 +114,13 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
         </div>
 
         <div className="flex flex-col gap-6">
-          <p className="text-lg text-muted-foreground leading-relaxed">
+          {/* Description */}
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
             {bounty.description}
           </p>
           <Separator className="bg-gray-400/50" />
 
+          {/* Submit Solution Section */}
           {!isCreator && !userHasSubmitted && isOngoing && (
             <>
               <SubmitSolution bounty={bounty} />
@@ -115,14 +128,15 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
             </>
           )}
 
+          {/* Submissions Section */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-xl sm:text-2xl font-semibold">
               Submissions ({bounty.submissions.length})
             </h2>
 
             {/* User's submission */}
             {userSubmission && (
-              <div className="">
+              <div>
                 <SubmissionCard
                   callerAddress={address!}
                   tokenType={
