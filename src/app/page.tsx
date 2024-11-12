@@ -4,7 +4,7 @@ import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { GlareCard } from "@/components/ui/glare-card";
 import { useBounties } from "@/features/bounties/hooks/bounties";
-import { Award, Search, Wallet } from "lucide-react";
+import { Award, Search } from "lucide-react";
 
 import {
   Accordion,
@@ -12,7 +12,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GradientSpinner } from "@/components/ui/gradient-spinner";
 import { BountyCard } from "@/features/bounties/components/bounty-card";
 import { SupportedChainKey, supportedChains } from "@/lib/viem";
@@ -89,48 +88,41 @@ function Features() {
         <MaxWidthWrapper className="grid grid-cols-2 items-center justify-center gap-4 md:grid-cols-3">
           <div className="flex justify-center">
             <GlareCard>
-              <Card className="text-sm sm:text-base h-full border-none bg-sky-950 text-white">
-                <CardHeader>
+              <div className="text-sm sm:text-base h-full border-none bg-sky-950 text-white sm:p-6 p-4 flex flex-col gap-4">
+                <div>
                   <Search className="mb-2 h-6 w-6" />
-                  <CardTitle>Discover Opportunities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>
-                    Find exciting bounties that match your skills and interests.
-                  </p>
-                </CardContent>
-              </Card>
+                  <p className="font-bold">Discover Opportunities</p>
+                </div>
+                <p className="text-xs sm:text-base w-full">
+                  Find bounties that match your skills and interests.
+                </p>
+              </div>
             </GlareCard>
           </div>
           <div className="flex items-center justify-center">
             <GlareCard>
-              <Card className="text-sm sm:text-base h-full border-none bg-blue-950 text-white">
-                <CardHeader>
+              <div className="text-sm sm:text-base h-full border-none bg-blue-950 text-white sm:p-6 p-4 flex flex-col gap-4">
+                <div>
                   <Award className="mb-2 h-6 w-6" />
-                  <CardTitle>Earn Rewards</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>
-                    Complete bounties and earn cryptocurrency rewards securely.
-                  </p>
-                </CardContent>
-              </Card>
+                  <p className="font-bold">Earn Rewards</p>
+                </div>
+                <p className="text-xs sm:text-base w-full">
+                  Complete bounties and earn rewards securely.
+                </p>
+              </div>
             </GlareCard>
           </div>
           <div className="flex items-center justify-center">
             <GlareCard>
-              <Card className="text-sm sm:text-base h-full border-none bg-cyan-950 text-white">
-                <CardHeader>
-                  <Wallet className="mb-2 h-6 w-6" />
-                  <CardTitle>Decentralized Payments</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>
-                    Receive instant payments directly to your wallet upon
-                    completion.
-                  </p>
-                </CardContent>
-              </Card>
+              <div className="text-sm sm:text-base h-full border-none bg-cyan-950 text-white sm:p-6 p-4 flex flex-col gap-4">
+                <div>
+                  <Search className="mb-2 h-6 w-6" />
+                  <p className="font-bold">Decentralized Paymentss</p>
+                </div>
+                <p className="text-xs sm:text-base w-full">
+                  Receive instantpayments directly to your wallet.
+                </p>
+              </div>
             </GlareCard>
           </div>
         </MaxWidthWrapper>
@@ -174,7 +166,6 @@ function OngoingBounties() {
     </section>
   );
 }
-
 
 function Faq() {
   const faqs = [
