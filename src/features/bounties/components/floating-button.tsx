@@ -8,7 +8,7 @@ export default function FloatingButton(
   return (
     <button
       {...props}
-      className="group fixed bottom-10 right-10 flex cursor-pointer items-end justify-end p-2"
+      className="group fixed bottom-20 right-10 flex cursor-pointer items-end justify-end p-2"
       type="button"
     >
       {/* main */}
