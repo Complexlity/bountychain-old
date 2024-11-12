@@ -31,7 +31,7 @@ export function BountyCard({ bounty }: { bounty: bounty }) {
   });
   return (
     <Link href={`/bounty/${bounty.id}`}>
-      <div className="group relative h-full w-[350px] cursor-pointer">
+      <div className="group relative h-full w-full  max-w-[350px] cursor-pointer">
         <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-600 to-green-600 opacity-25 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200 ">
           Hello{" "}
         </div>
