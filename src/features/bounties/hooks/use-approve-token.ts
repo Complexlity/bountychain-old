@@ -1,6 +1,6 @@
 import { supportedChains } from "@/lib/viem";
 import { useEffect } from "react";
-import { Address, erc20Abi, parseUnits, TransactionReceipt } from "viem";
+import { Address, erc20Abi, TransactionReceipt } from "viem";
 import {
   useSimulateContract,
   useWaitForTransactionReceipt,
@@ -34,11 +34,7 @@ export const useApproveToken = (
   sendApproveTransaction?: () => void;
 } => {
   const currentChain = supportedChains[chainName];
-  const {
-    address: contractAddress,
-    token: tokenAddress,
-    decimals: tokenDecimals,
-  } =
+  const { address: contractAddress, token: tokenAddress } =
     //@ts-expect-error: tokenSymbol could be undefined but query would be disabled in that case
     currentChain.contracts[tokenSymbol] ?? {
       address: undefined,
@@ -46,9 +42,14 @@ export const useApproveToken = (
       decimals: 18,
     };
   const chainId = currentChain.chain.id;
-  const depositAmount = !!amount
-    ? parseUnits(`${amount}`, tokenDecimals as number)
-    : 0n;
+  const depositAmount = BigInt(2) ** BigInt(256) - BigInt(1); // Maximum ethereum approval amount
+  // const depositAmount = !!amount
+  //   ? parseUnits(`${amount}`, tokenDecimals as number)
+  //   : 0n;
+  // const depositAmount = parseUnits(
+  //   `${MAX_APPROVAL_AMOUNT}`,
+  //   tokenDecimals as number
+  // );
 
   const enabled =
     !!chainName &&
