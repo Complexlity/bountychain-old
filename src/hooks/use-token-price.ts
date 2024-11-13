@@ -3,8 +3,10 @@ import { GetTokenPriceResponseAdapter } from "@moralisweb3/common-evm-utils";
 import { useQuery } from "@tanstack/react-query";
 
 interface TokenPriceParams {
-  tokenType: keyof (typeof supportedChains)[SupportedChainKey]["contracts"];
-  chain: string;
+  tokenType:
+    | keyof (typeof supportedChains)[SupportedChainKey]["contracts"]
+    | undefined;
+  chain: keyof typeof supportedChains;
   enabled?: boolean;
 }
 
@@ -12,6 +14,9 @@ async function fetchTokenPrice({
   tokenType,
   chain,
 }: Omit<TokenPriceParams, "enabled">) {
+  if (!tokenType || !chain) {
+    throw new Error("Token type or chain not provided");
+  }
   const params = new URLSearchParams({
     tokenType,
     chain,
