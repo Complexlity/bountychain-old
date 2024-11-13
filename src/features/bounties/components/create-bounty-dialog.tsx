@@ -41,6 +41,8 @@ import { z } from "zod";
 import { useApproveToken } from "../hooks/use-approve-token";
 import { useCreateBountyErc20 } from "../hooks/use-create-bounty-erc20";
 import { createBounty } from "../lib/queries";
+import { useTokenPrice } from "@/hooks/use-token-price";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -171,7 +173,6 @@ export function CreateBountyDialog({
         throw result;
       }
       const returned = result as Awaited<ReturnType<typeof createBounty>>;
-      console.log({ returned });
       return returned;
     },
     onSuccess: (data) => {
@@ -255,8 +256,6 @@ export function CreateBountyDialog({
       return { bountyId: null, hash: null };
     });
 
-    console.log({ bountyId });
-
     if (bountyId) {
       const data: CreateBountySchema = { ...bountyData, id: bountyId };
       sendDataToDb(data);
@@ -274,15 +273,22 @@ export function CreateBountyDialog({
     }
   );
 
+  const {
+    data: tokenPrice,
+    refetch: refetchTokenPrice,
+    isRefetching: isRefetchingTokenPrice,
+  } = useTokenPrice({
+    tokenType: currentCurrency,
+    chain: activeChain,
+  });
+
+  const amount = form.watch("amount");
+  const usdValue = tokenPrice?.usdPrice ? amount * tokenPrice.usdPrice : null;
+
   const hasEnoughAllowance =
     allowance &&
     Number(allowance) >=
       Number(parseUnits(`${form.getValues().amount}`, chainContract?.decimals));
-
-  console.log(
-    allowance,
-    Number(parseUnits(`${form.getValues().amount}`, chainContract?.decimals))
-  );
 
   return (
     <div>
@@ -354,7 +360,10 @@ export function CreateBountyDialog({
                     <FormItem className="flex-1">
                       <FormLabel>Currency</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(e) => {
+                          refetchTokenPrice();
+                          field.onChange(e);
+                        }}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -394,6 +403,23 @@ export function CreateBountyDialog({
                           {...field}
                         />
                       </FormControl>
+
+                      {usdValue && amount > 0 ? (
+                        isRefetchingTokenPrice ? (
+                          <p className="px-1 pb-2">
+                            <Loader2 className="ease animate-spin w-4 h-4" />
+                          </p>
+                        ) : (
+                          <p className="text-sm text-muted-foreground pb-2">
+                            ≈ $
+                            {usdValue.toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}{" "}
+                            USD
+                          </p>
+                        )
+                      ) : null}
                       <FormMessage />
                     </FormItem>
                   )}
