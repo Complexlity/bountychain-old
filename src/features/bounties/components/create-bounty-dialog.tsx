@@ -28,21 +28,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { insertBountiesSchema } from "@/db/schema";
 import { useCreateBountyNative } from "@/features/bounties/hooks/use-create-bounty-native";
 import { toast } from "@/hooks/use-toast";
+import { useTokenPrice } from "@/hooks/use-token-price";
 import { SupportedChainKey, supportedChains } from "@/lib/viem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Address, erc20Abi, parseUnits } from "viem";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { Address, erc20Abi, formatEther, parseUnits } from "viem";
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useWriteContract,
+} from "wagmi";
 import { z } from "zod";
 import { useApproveToken } from "../hooks/use-approve-token";
 import { useCreateBountyErc20 } from "../hooks/use-create-bounty-erc20";
+import { useUserBalance } from "../hooks/use-user-balance";
 import { createBounty } from "../lib/queries";
-import { useTokenPrice } from "@/hooks/use-token-price";
-import { Loader2 } from "lucide-react";
+import { formatBalance } from "@/lib/utils";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -65,7 +72,6 @@ const formSchema = z.object({
 });
 
 type CreateBountySchema = z.infer<typeof insertBountiesSchema>;
-
 export function CreateBountyDialog({
   children,
 }: {
@@ -119,6 +125,42 @@ export function CreateBountyDialog({
       enabled: isNotEth && !!address,
     },
   });
+
+  const { data: userTokenBalance, isLoading: isFetchingUserTokenBalance } =
+    useUserBalance({
+      chain: activeChain,
+      tokenType: currentCurrency,
+      userAddress: address,
+    });
+  const { data: nativeBalance, isLoading: isFetchingNativeUserBalance } =
+    useBalance({
+      address,
+      blockTag: "latest",
+      chainId: currentChain.chain.id,
+    });
+
+  const ethBalance = formatBalance(
+    Number(formatEther(nativeBalance?.value ?? 0n))
+  );
+
+  const currentBalance =
+    currentCurrency === "eth"
+      ? ethBalance
+      : userTokenBalance
+      ? userTokenBalance
+      : 0;
+
+  const amount = form.watch("amount");
+  const hasInsufficientBalance = Number(amount) > currentBalance;
+
+  useEffect(() => {
+    if (hasInsufficientBalance) {
+      form.setError("amount", {
+        type: "manual",
+        message: "Amount exceeds available balance",
+      });
+    }
+  }, [hasInsufficientBalance, form]);
 
   const { mutate: sendDataToBackupServer } = useMutation({
     mutationKey: ["backupBounty"],
@@ -282,7 +324,6 @@ export function CreateBountyDialog({
     chain: activeChain,
   });
 
-  const amount = form.watch("amount");
   const usdValue = tokenPrice?.usdPrice ? amount * tokenPrice.usdPrice : null;
 
   const hasEnoughAllowance =
@@ -385,6 +426,23 @@ export function CreateBountyDialog({
                           ))}
                         </SelectContent>
                       </Select>
+
+                      {currentCurrency && (
+                        <p className="text-sm text-muted-foreground">
+                          Balance:{" "}
+                          {(
+                            currentCurrency === "eth"
+                              ? isFetchingNativeUserBalance
+                              : isFetchingUserTokenBalance
+                          ) ? (
+                            <Loader2 className="inline ease animate-spin w-4 h-4 ml-1" />
+                          ) : (
+                            <>
+                              {currentBalance} {currentCurrency.toUpperCase()}
+                            </>
+                          )}
+                        </p>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -410,7 +468,7 @@ export function CreateBountyDialog({
                             <Loader2 className="ease animate-spin w-4 h-4" />
                           </p>
                         ) : (
-                          <p className="text-sm text-muted-foreground pb-2">
+                          <p className="text-sm text-muted-foreground">
                             ≈ $
                             {usdValue.toLocaleString(undefined, {
                               minimumFractionDigits: 2,
@@ -442,6 +500,7 @@ export function CreateBountyDialog({
                       isCreatingBountyOnchainErc20
                     }
                     type="submit"
+                    disabled={hasInsufficientBalance}
                   >
                     Submit
                   </Button>
