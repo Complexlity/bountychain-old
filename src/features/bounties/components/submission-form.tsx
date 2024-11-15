@@ -112,9 +112,9 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
     <div className="flex flex-col gap-2">
       <h2 className="text-2xl font-semibold">Submit Your Solution</h2>
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="p-3 sm:p-6">
           <form onSubmit={handleSubmit}>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4 ">
               <Textarea
                 placeholder="Describe your solution or provide a link to your work"
                 value={newSubmission}
@@ -133,8 +133,8 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
                 </Button>
               ) : (
                 <Button
-                  className="w-full"
-                  size="lg"
+                  className="w-full sm:h-11 sm:rounded-md sm:px-8"
+                  size="sm"
                   isLoading={isPending || isSigning}
                 >
                   Submit Solution

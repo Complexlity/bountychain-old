@@ -412,8 +412,8 @@ export function SubmissionCard({
         submission.isComplete ? "border-2 border-emerald-500" : ""
       }`}
     >
-      <CardContent className="pt-6">
-        <div className="flex flex-col space-y-4">
+      <CardContent className="p-3 sm:p-6">
+        <div className="flex flex-col space-y-2 sm:space-y-4">
           {/* Header Section */}
           <div className="flex flex-wrap items-center gap-2">
             {/* User Info */}
