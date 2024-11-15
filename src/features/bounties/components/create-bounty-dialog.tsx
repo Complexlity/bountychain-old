@@ -372,7 +372,7 @@ export function CreateBountyDialog({
           {children ? children : <Button>Create Bounty</Button>}
         </DialogTrigger>
         <DialogContent
-          className="sm:max-w-[425px] rounded-none sm:rounded-none"
+          className="sm:max-w-[425px] rounded-none sm:rounded-none z-[60]"
           portalContainer={container}
           onInteractOutside={(e) => e.preventDefault()}
         >
@@ -543,7 +543,7 @@ export function CreateBountyDialog({
         <div
           // @ts-expect-error: ref accepts set state action
           ref={setContainer}
-          className="dialog-portal bg-transparent bg-orange-400"
+          className="dialog-portal"
         />
       </Dialog>
     </div>
