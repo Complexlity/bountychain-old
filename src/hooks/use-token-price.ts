@@ -41,12 +41,6 @@ export function useTokenPrice({
     queryKey: ["tokenPrice", tokenType, chain],
     queryFn: () => fetchTokenPrice({ tokenType, chain }),
     enabled: Boolean(tokenType && chain && enabled),
-    // Refresh every 30 seconds
-    refetchInterval: 30000,
-    // Keep data fresh for 10 seconds
-    staleTime: 10000,
-    // Keep old data in cache for 5 minutes
-    gcTime: 300000,
     retry: 3,
   });
 }
