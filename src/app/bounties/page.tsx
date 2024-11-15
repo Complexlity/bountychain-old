@@ -55,8 +55,8 @@ export default function BountiesPage() {
             : status === "all"
             ? "All Bounties"
             : status === "ongoing"
-            ? "Ongoing Bounties"
-            : "Completed Bounties"}{" "}
+            ? "Ongoing"
+            : "Completed"}{" "}
           {!isPending ? `(${filteredBounties?.length})` : ""}
         </h1>
         <div className="flex gap-4">
