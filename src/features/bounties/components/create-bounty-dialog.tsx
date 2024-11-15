@@ -150,17 +150,31 @@ export function CreateBountyDialog({
       ? userTokenBalance
       : 0;
 
+  const isBalanceLoading =
+    currentCurrency === "eth"
+      ? isFetchingNativeUserBalance
+      : isFetchingUserTokenBalance;
+
   const amount = form.watch("amount");
-  const hasInsufficientBalance = Number(amount) > currentBalance;
+  const hasInsufficientBalance =
+    currentCurrency && !isBalanceLoading
+      ? Number(amount) > currentBalance
+      : false;
 
   useEffect(() => {
-    if (hasInsufficientBalance) {
-      form.setError("amount", {
-        type: "manual",
-        message: "Amount exceeds available balance",
-      });
+    if (!isBalanceLoading) {
+      if (hasInsufficientBalance) {
+        form.setError("amount", {
+          type: "manual",
+          message: "Amount exceeds available balance",
+        });
+      } else {
+        form.clearErrors("amount");
+      }
+    } else {
+      form.clearErrors("amount");
     }
-  }, [hasInsufficientBalance, form]);
+  }, [hasInsufficientBalance, form, currentBalance, isBalanceLoading]);
 
   const { mutate: sendDataToBackupServer } = useMutation({
     mutationKey: ["backupBounty"],
