@@ -126,18 +126,24 @@ export function CreateBountyDialog({
     },
   });
 
-  const { data: userTokenBalance, isLoading: isFetchingUserTokenBalance } =
-    useUserBalance({
-      chain: activeChain,
-      tokenType: currentCurrency,
-      userAddress: address,
-    });
-  const { data: nativeBalance, isLoading: isFetchingNativeUserBalance } =
-    useBalance({
-      address,
-      blockTag: "latest",
-      chainId: currentChain.chain.id,
-    });
+  const {
+    data: userTokenBalance,
+    isLoading: isFetchingUserTokenBalance,
+    refetch: refetchUserTokenBalance,
+  } = useUserBalance({
+    chain: activeChain,
+    tokenType: currentCurrency,
+    userAddress: address,
+  });
+  const {
+    data: nativeBalance,
+    isLoading: isFetchingNativeUserBalance,
+    refetch: refetchNativeBalance,
+  } = useBalance({
+    address,
+    blockTag: "latest",
+    chainId: currentChain.chain.id,
+  });
 
   const ethBalance = formatBalance(
     Number(formatEther(nativeBalance?.value ?? 0n))
@@ -175,6 +181,17 @@ export function CreateBountyDialog({
       form.clearErrors("amount");
     }
   }, [hasInsufficientBalance, form, currentBalance, isBalanceLoading]);
+
+  console.log({ currentCurrency });
+
+  const currency = form.watch("currency");
+  useEffect(() => {
+    if (currentCurrency === "eth") {
+      refetchNativeBalance();
+    } else if (currentCurrency) {
+      refetchUserTokenBalance();
+    }
+  }, [currency, currentCurrency]);
 
   const { mutate: sendDataToBackupServer } = useMutation({
     mutationKey: ["backupBounty"],
