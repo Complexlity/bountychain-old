@@ -73,6 +73,7 @@ For Full Explanation on Usage and Architecture, please refer to the Video Demo -
 - [ ] Withdraw / Cancel A Bounty
 - [x] Support for ERC20 tokens like USDC
 - [x] Token Prices In USD
+- [x] Show Token Balance when creating a bounty
 - [ ] Bounty Deadline and Expiry
 - [ ] Adding images
   - [ ] For bounty description
