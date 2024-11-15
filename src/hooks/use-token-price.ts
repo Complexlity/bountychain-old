@@ -41,6 +41,5 @@ export function useTokenPrice({
     queryKey: ["tokenPrice", tokenType, chain],
     queryFn: () => fetchTokenPrice({ tokenType, chain }),
     enabled: Boolean(tokenType && chain && enabled),
-    retry: 3,
   });
 }
