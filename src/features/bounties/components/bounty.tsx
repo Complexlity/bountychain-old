@@ -35,15 +35,17 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
   };
 
   const submissions = bounty.submissions ?? [];
-  const userHasSubmitted = submissions.some(
-    (submission) => submission.creator === address
-  );
   const userSubmission = submissions.find(
     (submission) => submission.creator === address
   );
-  const otherSubmissions = submissions.filter(
-    (submission) => submission.creator !== address
+  const completedSubmissions = submissions.filter(
+    (submission) => submission.isComplete && submission.creator !== address
   );
+  const otherSubmissions = submissions.filter(
+    (submission) => !submission.isComplete && submission.creator !== address
+  );
+
+  const userHasSubmitted = !!userSubmission;
 
   return (
     <div className="w-full max-w-3xl mx-auto bg-background/50 backdrop-blur-sm rounded-lg">
@@ -131,12 +133,32 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
           {/* Submissions Section */}
           <div className="flex flex-col gap-4">
             <h2 className="text-xl sm:text-2xl font-semibold">
-              Submissions ({bounty.submissions.length})
+              Submissions ({submissions.length})
             </h2>
 
-            {/* User's submission */}
-            {userSubmission && (
-              <div>
+            <div className="space-y-4">
+              {/* Completed submissions */}
+              {completedSubmissions.map((submission, index) => (
+                <SubmissionCard
+                  key={`completed-${index}`}
+                  callerAddress={address!}
+                  submission={submission}
+                  tokenType={
+                    bounty.token as keyof (typeof supportedChains)[SupportedChainKey]["contracts"]
+                  }
+                  isExpanded={
+                    expandedSubmissionIndex === submissions.indexOf(submission)
+                  }
+                  onToggle={() =>
+                    handleSubmissionToggle(submissions.indexOf(submission))
+                  }
+                  isCreator={isCreator}
+                  isOngoing={isOngoing}
+                />
+              ))}
+
+              {/* User's submission */}
+              {userSubmission && (
                 <SubmissionCard
                   callerAddress={address!}
                   tokenType={
@@ -153,39 +175,28 @@ export function Bounty({ bounty }: { bounty: Bounty }) {
                   isCreator={isCreator}
                   isOngoing={isOngoing}
                 />
-              </div>
-            )}
+              )}
 
-            {/* Other submissions */}
-            {otherSubmissions.length > 0 && (
-              <div>
-                <div className="space-y-4">
-                  {otherSubmissions
-                    .sort((a, b) => Number(b.isComplete) - Number(a.isComplete))
-                    .map((submission, index) => (
-                      <SubmissionCard
-                        key={index}
-                        callerAddress={address!}
-                        submission={submission}
-                        tokenType={
-                          bounty.token as keyof (typeof supportedChains)[SupportedChainKey]["contracts"]
-                        }
-                        isExpanded={
-                          expandedSubmissionIndex ===
-                          submissions.indexOf(submission)
-                        }
-                        onToggle={() =>
-                          handleSubmissionToggle(
-                            submissions.indexOf(submission)
-                          )
-                        }
-                        isCreator={isCreator}
-                        isOngoing={isOngoing}
-                      />
-                    ))}
-                </div>
-              </div>
-            )}
+              {/* Other ongoing submissions */}
+              {otherSubmissions.map((submission, index) => (
+                <SubmissionCard
+                  key={`ongoing-${index}`}
+                  callerAddress={address!}
+                  submission={submission}
+                  tokenType={
+                    bounty.token as keyof (typeof supportedChains)[SupportedChainKey]["contracts"]
+                  }
+                  isExpanded={
+                    expandedSubmissionIndex === submissions.indexOf(submission)
+                  }
+                  onToggle={() =>
+                    handleSubmissionToggle(submissions.indexOf(submission))
+                  }
+                  isCreator={isCreator}
+                  isOngoing={isOngoing}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
