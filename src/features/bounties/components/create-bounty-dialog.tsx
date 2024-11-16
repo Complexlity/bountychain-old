@@ -446,7 +446,7 @@ export function CreateBountyDialog({
                             />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="z-[61]">
                           {supportedTokens.map((token) => (
                             <SelectItem
                               key={`supportedToken-${token}`}
