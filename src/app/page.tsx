@@ -158,9 +158,9 @@ function OngoingBounties() {
         )}
         <div className="mx-auto grid gap-6 md:grid-cols-2 lg:grid-cols-3  justify-center">
           {ongoingBounties.length > 0 &&
-            ongoingBounties.map((bounty) => (
-              <BountyCard bounty={bounty} key={bounty.id} />
-            ))}
+            ongoingBounties
+              .slice(0, 3)
+              .map((bounty) => <BountyCard bounty={bounty} key={bounty.id} />)}
         </div>
       </MaxWidthWrapper>
     </section>
