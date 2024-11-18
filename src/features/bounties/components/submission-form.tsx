@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +10,7 @@ import {
   WithSignature,
 } from "@/features/bounties/lib/types";
 import { toast } from "@/hooks/use-toast";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
@@ -109,8 +111,19 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <h2 className="text-2xl font-semibold">Submit Your Solution</h2>
+      <Alert
+        variant="default"
+        className="bg-muted/50 flex items-center gap-2 py-1 px-2"
+      >
+        <span>
+          <InfoCircledIcon className="h-4 w-4 fill-blue-500 text-blue-800" />
+        </span>
+        <p className="">
+          You don&apos;t need to own any tokens to submit a solution.
+        </p>
+      </Alert>
       <Card>
         <CardContent className="p-3 sm:p-6">
           <form onSubmit={handleSubmit}>
