@@ -1,6 +1,9 @@
 import { ImageResponse } from "next/og";
 import { getBounty } from "@/features/bounties/lib/queries";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
 export async function GET(
   request: Request,
   { params }: { params: { bountyId: string } }
@@ -10,8 +13,6 @@ export async function GET(
     if (!bounty) {
       return new Response("Bounty not found", { status: 404 });
     }
-
-    console.log(bounty.amount.toString());
 
     return new ImageResponse(
       (
