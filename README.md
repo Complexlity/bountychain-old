@@ -101,3 +101,5 @@ Architecture Diagram - 👉 [eraser.io](https://app.eraser.io/workspace/JBbpfOHG
    Currently, the api calls are not typesafe and does not have any auto complete and automatic schema parsing. Using TRPC will solve all these issues.  See [Bounty API Folder](/src/features/bounties/api/)
 - [ ] Use chainId as source or truth not chainName
   Using chainId is more reliable than chainName especially if support for other chains might be added.
+- [ ] Put backup server in same repo
+  Backup server is currently at [here](https://github.com/gitcoinco/gitcoin-backup-server)
