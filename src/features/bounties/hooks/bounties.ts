@@ -37,5 +37,6 @@ export function useBounty(id: string) {
       }
     },
     enabled: !!id,
+    refetchOnMount: true,
   });
 }
