@@ -83,7 +83,7 @@ Architecture Diagram - 👉 [eraser.io](https://app.eraser.io/workspace/JBbpfOHG
 
 ## Improvements
 
-<!-- Add a markdown checkbox for some features improvements -->
+### App
 
 - [ ] Withdraw / Cancel A Bounty
 - [x] Support for ERC20 tokens like USDC
@@ -94,3 +94,10 @@ Architecture Diagram - 👉 [eraser.io](https://app.eraser.io/workspace/JBbpfOHG
   - [ ] For bounty description
   - [ ] For bounty submission
 - [ ] Rich text support for description
+
+### Code
+
+- [ ] Use TRPC for API calls
+   Currently, the api calls are not typesafe and does not have any auto complete and automatic schema parsing. Using TRPC will solve all these issues.  See [Bounty API Folder](/src/features/bounties/api/)
+- [ ] Use chainId as source or truth not chainName
+  Using chainId is more reliable than chainName especially if support for other chains might be added.
