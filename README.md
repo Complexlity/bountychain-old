@@ -49,15 +49,16 @@ Here's all the components comprising the BountyChain platform:
 
 Currently, it's hosted on Arbitrum and Arbitrum Sepolia networks.
 
-- Arbitrum: 
+- Arbitrum:
+
   - Native Token: [0xEda8B0898DAc56ead2bC4f573C5252D3ef3d0b3c](https://arbiscan.io/address/0xEda8B0898DAc56ead2bC4f573C5252D3ef3d0b3c)
   - USDC: [0xA7661b719aa7c7af86Dcd7bC0Dc58437945d1BEd](https://arbiscan.io/address/0xA7661b719aa7c7af86Dcd7bC0Dc58437945d1BEd)
 
-- Arbitrum Sepolia: 
- - Native Token: [0x6E46796857a0E061374a0Bcb4Ce01af851773d2A](https://sepolia.arbiscan.io/address/0x6E46796857a0E061374a0Bcb4Ce01af851773d2A)
- - USDC: [0x48FD137b6cB91AC5e4eb5E71e0C8e31ee4801D7E](https://sepolia.arbiscan.io/address/0x48FD137b6cB91AC5e4eb5E71e0C8e31ee4801D7E)
+- Arbitrum Sepolia:
+- Native Token: [0x6E46796857a0E061374a0Bcb4Ce01af851773d2A](https://sepolia.arbiscan.io/address/0x6E46796857a0E061374a0Bcb4Ce01af851773d2A)
+- USDC: [0x48FD137b6cB91AC5e4eb5E71e0C8e31ee4801D7E](https://sepolia.arbiscan.io/address/0x48FD137b6cB91AC5e4eb5E71e0C8e31ee4801D7E)
 
-Found in the [src/](/src/features/bounties/contract/bounty.sol)
+Contracts Found in the [/src/features/bounties/contract](/src/features/bounties/contract)
 
 2. **Frontend and Main Server**: The site is built with Nextjs which uses React for the frontend and Nodejs for the server routes. The server routes are responsible for saving the bounty details to the database. It's also handle submissions.
 
@@ -71,12 +72,12 @@ The backup server is resonsible for storing bounty details of failed transaction
 
 For Full Explanation on Usage and Architecture, please refer to the Video Demo - 👉 [Loom Video](https://www.loom.com/share/3d4e5fcebaf247cc839f9708d061b536?sid=a44a098f-a308-45ca-bcfb-1fde3f04512c)
 
-N/B: Since making the video, some improvements have been made to the code: 
+N/B: Since making the video, some improvements have been made to the code:
+
 - Adding erc20 supported contract to add support for other tokens.
-- Adding USDC support. 
+- Adding USDC support.
 - Improve the create flow: Show prices and user's token balance
 - Show prices in USD, etc.
-
 
 Architecture Diagram - 👉 [eraser.io](https://app.eraser.io/workspace/JBbpfOHGZvOCySKz59qV)
 
