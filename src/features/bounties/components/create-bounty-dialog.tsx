@@ -213,6 +213,7 @@ export function CreateBountyDialog({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bounties"] });
+      queryClient.refetchQueries({ queryKey: ["bounties"] });
       form.reset();
       toast({
         title: "Bounty created on backup",
@@ -250,6 +251,7 @@ export function CreateBountyDialog({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["bounties"] });
+      queryClient.refetchQueries({ queryKey: ["bounties"] });
       form.reset();
       toast({
         title: "Bounty created successfully",

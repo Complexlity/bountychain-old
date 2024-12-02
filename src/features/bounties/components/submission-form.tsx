@@ -44,6 +44,7 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bounty", bountyId] });
+      queryClient.refetchQueries({ queryKey: ["bounty", bountyId] });
       toast({
         title: "Submission added successfully",
       });

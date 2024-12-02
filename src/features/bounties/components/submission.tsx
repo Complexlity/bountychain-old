@@ -388,6 +388,7 @@ export function SubmissionCard({
           const data = { bountyId, submissionId, hash: txHash, tokenType };
           await updateBounty(data);
           queryClient.invalidateQueries({ queryKey: ["bounty", bountyId] });
+          queryClient.refetchQueries({ queryKey: ["bounty", bountyId] });
         },
         onError: (error) => {
           console.error(error);
