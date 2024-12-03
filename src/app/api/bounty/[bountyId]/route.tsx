@@ -1,5 +1,8 @@
 import { get } from "@/features/bounties/api/bounty.bountyid";
 import { NextRequest } from "next/server";
+
+export const revalidate = 2;
+
 export const GET = async (
   _: NextRequest,
   {

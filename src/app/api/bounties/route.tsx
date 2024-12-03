@@ -1,6 +1,7 @@
 import { get, post } from "@/features/bounties/api/bounties";
 import { NextRequest } from "next/server";
 
+export const revalidate = 2;
 export const GET = async () => {
   const res = await get();
   return new Response(JSON.stringify(res));
