@@ -4,7 +4,7 @@ import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { GlareCard } from "@/components/ui/glare-card";
 import { useBounties } from "@/features/bounties/hooks/bounties";
-import { Award, Search } from "lucide-react";
+import { Award, Search, Wallet } from "lucide-react";
 
 import {
   Accordion,
@@ -90,7 +90,7 @@ function Features() {
             <GlareCard>
               <div className="text-sm sm:text-base h-full border-none bg-sky-950 text-white sm:p-6 p-4 flex flex-col gap-4">
                 <div>
-                  <Search className="mb-2 h-6 w-6" />
+                  <Search className="hidden sm:block mb-2 h-4 w-4 sm:h-6 sm:w-6" />
                   <p className="font-bold">Discover Opportunities</p>
                 </div>
                 <p className="text-xs sm:text-base w-full">
@@ -103,7 +103,7 @@ function Features() {
             <GlareCard>
               <div className="text-sm sm:text-base h-full border-none bg-blue-950 text-white sm:p-6 p-4 flex flex-col gap-4">
                 <div>
-                  <Award className="mb-2 h-6 w-6" />
+                  <Award className="hidden sm:block mb-2 h-4 w-4 sm:h-6 sm:w-6" />
                   <p className="font-bold">Earn Rewards</p>
                 </div>
                 <p className="text-xs sm:text-base w-full">
@@ -116,11 +116,13 @@ function Features() {
             <GlareCard>
               <div className="text-sm sm:text-base h-full border-none bg-cyan-950 text-white sm:p-6 p-4 flex flex-col gap-4">
                 <div>
-                  <Search className="mb-2 h-6 w-6" />
-                  <p className="font-bold">Decentralized Paymentss</p>
+                  <Wallet className="hidden sm:block mb-2 h-4 w-4 sm:h-6 sm:w-6" />
+                  <p className="font-bold text-xs sm:text-base">
+                    Decentralized Paymentss
+                  </p>
                 </div>
                 <p className="text-xs sm:text-base w-full">
-                  Receive instantpayments directly to your wallet.
+                  Receive instant payments directly to your wallet.
                 </p>
               </div>
             </GlareCard>
