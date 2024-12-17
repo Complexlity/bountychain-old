@@ -16,7 +16,7 @@ import { AuthProvider } from "./auth-provider";
 
 const queryClient = new QueryClient();
 const wallet = new EthereumWallet()
-
+console.log({rpId: turnkeyConfig.passkey.rpId})
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
