@@ -1,6 +1,6 @@
 # BountyChain
 
-BountyChain is a decentralized bounty platform that allows users to create bounties, complete them, and earn rewards in a decentralized way. It is peer-to-peer, and anyone can create a bounty and complete it. The platform is responsible for streamlining the creation and payment process by making it work in just on button click rather than the multi step in traditional processes
+BountyChain is a decentralized bounty platform that allows users to create bounties, complete them, and earn rewards in a decentralized way. It is peer-to-peer, and anyone can create a bounty and complete it. The platform is responsible for streamlining the creation and payment process by making it work in just on button click rather than the multi step in traditional processes.
 
 LIVE: [https://bountychain.xyz](https://bountychain.xyz)
 
