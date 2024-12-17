@@ -4,7 +4,7 @@ import {
   supportedChains,
 } from "@/lib/viem";
 import { useMutation } from "@tanstack/react-query";
-import { Address, decodeEventLog, erc20Abi, parseUnits } from "viem";
+import { Address, decodeEventLog, parseUnits } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
 
 export const useCreateBountyErc20 = ({
@@ -32,7 +32,6 @@ export const useCreateBountyErc20 = ({
         address: contractAddress,
         decimals,
         abi: bountyAbi,
-        token: tokenAddress,
       } = supportedChains[activeChain].contracts[tokenType];
 
       const depositAmount = parseUnits(`${amount}`, decimals);

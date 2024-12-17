@@ -103,7 +103,7 @@ export function CreateBountyDialog({
       currency: undefined,
     },
   });
-  const { client, getActiveClient } = useTurnkey()
+  const { client } = useTurnkey()
   const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
 
   const [walletClient, setWalletClient] = useState<Awaited<

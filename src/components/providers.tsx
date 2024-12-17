@@ -30,7 +30,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       config={{
         rpId: turnkeyConfig.passkey.rpId,
         apiBaseUrl: "https://api.turnkey.com",
-  defaultOrganizationId: process.env.NEXT_PUBLIC_ORGANIZATION_ID,
+  defaultOrganizationId: process.env.NEXT_PUBLIC_ORGANIZATION_ID!,
         wallet: wallet,
       }}
     >

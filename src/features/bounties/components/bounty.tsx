@@ -4,16 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Separator } from "@/components/ui/separator";
 import { TruncatedAddress } from "@/components/ui/truncated-address";
+import { useWallets } from "@/components/wallet-provider";
+import { useTokenPrice } from "@/hooks/use-token-price";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 import { ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { useAccount } from "wagmi";
 import { type Bounty } from "../lib/types";
 import { SubmissionCard } from "./submission";
 import { SubmitSolution } from "./submission-form";
-import { SupportedChainKey, supportedChains } from "@/lib/viem";
-import { useTokenPrice } from "@/hooks/use-token-price";
-import { useWallets } from "@/components/wallet-provider";
 
 export function Bounty({ bounty }: { bounty: Bounty }) {
   const [expandedSubmissionIndex, setExpandedSubmissionIndex] = useState<

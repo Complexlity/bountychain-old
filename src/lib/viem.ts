@@ -91,7 +91,7 @@ export const getTurnkeyWalletClient = async (
   // Create a new account using the provided Turnkey client and the specified account for signing
   const turnkeyAccount = await createAccount({
     client: turnkeyClient,
-    organizationId: process.env.NEXT_PUBLIC_ORGANIZATION_ID,
+    organizationId: process.env.NEXT_PUBLIC_ORGANIZATION_ID!,
     signWith,
   })
 

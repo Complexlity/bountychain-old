@@ -31,7 +31,7 @@ const stamper = new ApiKeyStamper({
 
 const client = new TurnkeyServerClient({
   apiBaseUrl: "https://api.turnkey.com",
-  organizationId: process.env.NEXT_PUBLIC_ORGANIZATION_ID,
+  organizationId: process.env.NEXT_PUBLIC_ORGANIZATION_ID!,
   stamper,
 })
 

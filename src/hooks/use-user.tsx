@@ -20,6 +20,7 @@ export const useUser = () => {
 
   
    queryKey:  ['currentUser'],
+   //@ts-expect-error: queryfn fails for some reason
     queryFn: async () => {
       // If turnkey is not initialized, return undefined
       if (!turnkey) return undefined
@@ -75,6 +76,7 @@ export const useUser = () => {
     router.refresh()
   }
 
+  //@ts-expect-error: data not typed properly
   const { user, currentClient } = data || { user: undefined, currentClient: undefined }
 
   return { 

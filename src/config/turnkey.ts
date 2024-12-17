@@ -5,8 +5,8 @@ const { NEXT_PUBLIC_ORGANIZATION_ID, NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_RP_ID } =
 
 
 export const turnkeyConfig = {
-  apiBaseUrl: NEXT_PUBLIC_BASE_URL,
-  organizationId: NEXT_PUBLIC_ORGANIZATION_ID,
+  apiBaseUrl: NEXT_PUBLIC_BASE_URL!,
+  organizationId: NEXT_PUBLIC_ORGANIZATION_ID!,
   iFrame: {
     url: "https://auth.turnkey.com",
     elementId: "turnkey-auth-iframe-element-id",

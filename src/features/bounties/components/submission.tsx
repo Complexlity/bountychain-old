@@ -46,7 +46,7 @@ export function SubmissionCard({
   isOngoing,
 }: SubmissionCardProps) {
   // const { address } = useAccount();
-  const { client, getActiveClient } = useTurnkey()
+  const { client } = useTurnkey()
   const { state } = useWallets()
   const { selectedAccount } = state
   const address = selectedAccount?.address
