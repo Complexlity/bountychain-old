@@ -20,6 +20,13 @@ const serverEnvSchema = z
           "ACTIVE_CHAIN must be one of the supported chains: " +
           Object.keys(supportedChains).join(", "),
       }),
+      NEXT_PUBLIC_RP_ID: z.string().optional(),
+      NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
+      NEXT_PUBLIC_APP_URL: z.string().optional(),
+      TURNKEY_API_PUBLIC_KEY: z.string().min(1),
+      TURNKEY_API_PRIVATE_KEY: z.string().min(1),
+      NEXT_PUBLIC_BASE_URL: z.string().min(1),
+      NEXT_PUBLIC_ORGANIZATION_ID: z.string().min(1),
   })
   .superRefine((input, ctx) => {
     if (input.NODE_ENV === "production" && !input.DATABASE_AUTH_TOKEN) {
@@ -40,6 +47,8 @@ const serverEnvSchema = z
 export type serverEnv = z.infer<typeof serverEnvSchema>;
 
 const { data: serverEnv, error } = serverEnvSchema.safeParse(process.env);
+
+console.log(error)
 
 if (error) {
   console.error("❌ Invalid env:");

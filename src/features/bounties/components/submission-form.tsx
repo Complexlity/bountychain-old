@@ -4,6 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { useWallets } from "@/components/wallet-provider";
 import {
   Bounty,
   CreateBountySubmissionSchema,
@@ -13,19 +14,28 @@ import { toast } from "@/hooks/use-toast";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTurnkey } from "@turnkey/sdk-react";
+import { signMessage } from '@turnkey/viem';
 import React, { useState } from "react";
-import { isAddress } from "viem";
-import { useAccount, useSignMessage } from "wagmi";
+import { useAccount } from "wagmi";
+
 
 export function SubmitSolution({ bounty }: { bounty: Bounty }) {
   const [newSubmission, setNewSubmission] = useState("");
   const [isSigning, setIsSigning] = useState(false);
   const { address } = useAccount();
-  const { signMessageAsync: signMessage } = useSignMessage();
+  const { client, turnkey } = useTurnkey()
+  const { state: { selectedAccount } } = useWallets()
+  // const { signMessageAsync: signMessage } = useSignMessage();
   const queryClient = useQueryClient();
   const bountyId = bounty.id;
   const { openConnectModal } = useConnectModal();
+  const organizationId = process.env.NEXT_PUBLIC_ORGANIZATION_ID!;
+  console.log({organizationId})
 
+  
+
+  
   const { mutateAsync: createSubmission, isPending } = useMutation({
     mutationKey: ["createBountySubmission"],
     mutationFn: async (data: WithSignature<CreateBountySubmissionSchema>) => {
@@ -61,11 +71,30 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address || !isAddress) {
-      if (!!openConnectModal) {
-        openConnectModal();
-      } else return;
+    // if (!address || !isAddress) {
+    //   if (!!openConnectModal) {
+    //     openConnectModal();
+    //   } else return;
+    // }
+    if (!selectedAccount || !turnkey) {
+      toast({
+        variant: "destructive",
+        title: "Selected Account or Turnkey Missing",
+        description: "Please connect your wallet to continue",
+      }); 
+      return
     }
+    const browserClient = client
+    
+
+    if (!browserClient) {
+      toast({
+        variant: "destructive",
+        title: "Browser Client Required",
+      }); 
+      return
+    }
+    const address = selectedAccount.address;
 
     if (!newSubmission) {
       toast({
@@ -90,16 +119,38 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
       creator: address,
     };
     setIsSigning(true);
-
-    const signature = await signMessage({
-      message: JSON.stringify(submission),
-    }).catch(() => {
+    
+    const signature = await signMessage(browserClient, JSON.stringify(submission),
+    organizationId, address ).catch((e) => {
+      console.error(e)
+      alert(JSON.stringify(e))
       toast({
         title: "Error signing message",
         variant: "destructive",
       });
       return null;
     });
+    // const signature = await walletClient?.signMessage({
+    //   account: address,
+    //   message: JSON.stringify(submission),
+    // }).catch((e) => {
+    //     console.error(e)
+    //     alert(JSON.stringify(e))
+    //     toast({
+    //       title: "Error signing message",
+    //       variant: "destructive",
+    //     });
+    //     return null;
+    //     });
+    // const signature = await signMessage({
+    //   message: JSON.stringify(submission),
+    // }).catch(() => {
+    //   toast({
+    //     title: "Error signing message",
+    //     variant: "destructive",
+    //   });
+    //   return null;
+    // });
     setIsSigning(false);
     if (!signature) return;
     await createSubmission({ ...submission, signature, address }).catch((e) => {
@@ -136,7 +187,7 @@ export function SubmitSolution({ bounty }: { bounty: Bounty }) {
                 required
                 className="min-h-[100px]"
               />
-              {!address ? (
+              {!address && !selectedAccount ? (
                 <Button
                   type="button"
                   className="w-full"

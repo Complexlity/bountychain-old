@@ -27,7 +27,6 @@ export const useCreateBountyErc20 = ({
 
       const activeChain = process.env
         .NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
-      console.log({ activeChain });
       const publicClient = getPublicClient(activeChain);
       const {
         address: contractAddress,
@@ -37,16 +36,13 @@ export const useCreateBountyErc20 = ({
       } = supportedChains[activeChain].contracts[tokenType];
 
       const depositAmount = parseUnits(`${amount}`, decimals);
-      console.log({ depositAmount });
-      console.log({ tokenAddress, address, contractAddress });
 
-      const allowance = await publicClient.readContract({
-        address: tokenAddress,
-        abi: erc20Abi,
-        functionName: "allowance",
-        args: [address as Address, contractAddress],
-      });
-      console.log({ allowance });
+      // const allowance = await publicClient.readContract({
+      //   address: tokenAddress,
+      //   abi: erc20Abi,
+      //   functionName: "allowance",
+      //   args: [address as Address, contractAddress],
+      // });
 
       console.log("Simulating...");
       const { request } = await publicClient.simulateContract({
@@ -61,10 +57,7 @@ export const useCreateBountyErc20 = ({
         throw new Error("Could not simulate contract");
       }
 
-      console.log({ request });
-      console.log("Writing...");
       const hash = await writeContractAsync(request);
-      console.log({ hash });
       const receipt = await publicClient.waitForTransactionReceipt({
         hash,
       });

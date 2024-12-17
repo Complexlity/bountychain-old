@@ -40,7 +40,6 @@ export const usePayBounty = (
     !!submissionId &&
     isAddress(winnerAddress) &&
     isAddress(callerAddress);
-  console.log({ enabled });
 
   const { address: contractAddress, abi: bountyAbi } =
     supportedChains[activeChain].contracts[tokenType];
@@ -82,7 +81,6 @@ export const usePayBounty = (
     error,
   } = useWaitForTransactionReceipt({ chainId: chain?.id, hash: txHash });
 
-  console.log({ isConfirmingError });
 
   useEffect(() => {
     if (!!txReceipt && !!txHash && isSuccess) {

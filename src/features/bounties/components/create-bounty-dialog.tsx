@@ -25,19 +25,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useWallets } from "@/components/wallet-provider";
 import { insertBountiesSchema } from "@/db/schema";
+import {
+  default as BountyContractABI
+} from "@/features/bounties/contract/bountyAbi.json";
 import { useCreateBountyNative } from "@/features/bounties/hooks/use-create-bounty-native";
 import { toast } from "@/hooks/use-toast";
 import { useTokenPrice } from "@/hooks/use-token-price";
-import { SupportedChainKey, supportedChains } from "@/lib/viem";
+import { formatBalance } from "@/lib/utils";
+import { getPublicClient, getTurnkeyWalletClient, SupportedChainKey, supportedChains } from "@/lib/viem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTurnkey } from "@turnkey/sdk-react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Address, erc20Abi, formatEther, parseUnits } from "viem";
+import { Address, erc20Abi, formatEther, decodeEventLog, parseEther, parseUnits } from "viem";
 import {
   useAccount,
   useBalance,
@@ -49,7 +55,7 @@ import { useApproveToken } from "../hooks/use-approve-token";
 import { useCreateBountyErc20 } from "../hooks/use-create-bounty-erc20";
 import { useUserBalance } from "../hooks/use-user-balance";
 import { createBounty } from "../lib/queries";
-import { formatBalance } from "@/lib/utils";
+import { useUser } from "@/hooks/use-user";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -81,7 +87,11 @@ export function CreateBountyDialog({
   const { isConnected } = useAccount();
   const [container, setContainer] = useState(null);
   const { openConnectModal } = useConnectModal();
-  const { address, chain } = useAccount();
+  const { chain } = useAccount();
+  const { state } = useWallets()
+  const { currentClient } = useUser()
+  const { selectedAccount } = state
+  const address = selectedAccount?.address as Address | undefined
   const queryClient = useQueryClient();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -93,8 +103,28 @@ export function CreateBountyDialog({
       currency: undefined,
     },
   });
-
+  const { client, getActiveClient } = useTurnkey()
   const activeChain = process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
+
+  const [walletClient, setWalletClient] = useState<Awaited<
+    ReturnType<typeof getTurnkeyWalletClient>
+  > | null>(null)
+  useEffect(() => {
+    const initializeWalletClient = async () => {
+      if (!selectedAccount || !address || !client) return
+      const walletClient = await getTurnkeyWalletClient(
+        activeChain,
+        client,
+        address
+      )
+      setWalletClient(walletClient)
+    }
+
+    initializeWalletClient()
+  }, [selectedAccount, client])
+
+
+  
   const currentChain = supportedChains[activeChain];
   const supportedTokens = Object.keys(
     currentChain.contracts
@@ -182,7 +212,6 @@ export function CreateBountyDialog({
     }
   }, [hasInsufficientBalance, form, currentBalance, isBalanceLoading]);
 
-  console.log({ currentCurrency });
 
   const currency = form.watch("currency");
   useEffect(() => {
@@ -272,6 +301,7 @@ export function CreateBountyDialog({
   const { writeContractAsync } = useWriteContract();
 
   const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     mutateAsync: createBountyOnChainNative,
     isPending: isCreatingBountyOnchainNative,
   } = useCreateBountyNative({
@@ -280,6 +310,7 @@ export function CreateBountyDialog({
     writeContractAsync,
   });
   const {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     mutateAsync: createBountyOnChainErc20,
     isPending: isCreatingBountyOnchainErc20,
   } = useCreateBountyErc20({
@@ -287,6 +318,106 @@ export function CreateBountyDialog({
     //@ts-expect-error
     writeContractAsync,
   });
+
+  const { mutateAsync: createBountyTurnkeyNative, isPending: isCreatingBountyTurnkeyNative } = useMutation({
+    mutationFn: async ({
+      amount,
+      tokenType = "eth",
+    }: {
+      amount: number;
+      tokenType: "eth" | "usdc";
+    }) => {
+      if (tokenType !== "eth") {
+        throw new Error("Only eth is supported here");
+      }
+
+      if (!address) {
+        toast({
+          title: "Connect your wallet",
+          variant: "destructive"
+        })
+        throw new Error("Address not initialized")
+      }
+
+      // const publicClient = getPublicClient(activeChain);
+
+      // const { request } = await publicClient.simulateContract({
+      //   address: supportedChains[activeChain].bountyContractAddress,
+      //   abi: BountyContractABI,
+      //   functionName: "createBounty",
+      //   args: [isETH ? 0 : 1, parseEther(`${amount}`)],
+      //   value: isETH ? parseEther(`${amount}`) : undefined,
+      // });
+      let turnkeyWalletClient = walletClient
+      if (!turnkeyWalletClient) {
+        alert("Wallet client not found")
+        if (client) {
+          alert("Client found. Getting wallet client")
+          turnkeyWalletClient = await getTurnkeyWalletClient(
+            activeChain,
+            client,
+            address
+          )
+        }
+        else {
+          alert("No client found. Getting current client")
+          // const authClient = await getActiveClient() 
+          if (currentClient) {
+            turnkeyWalletClient = await getTurnkeyWalletClient(
+              activeChain,
+              currentClient,
+              address
+            )
+          }
+          
+        }
+        
+      }
+
+      if (!turnkeyWalletClient) {
+        toast({
+          title: "Turnkey wallet client not initialized",
+          variant: "destructive"
+        })
+        throw new Error("Turnkey wallet client not initialized")
+      }
+      
+      const publicClient = getPublicClient(activeChain);
+      
+      const { request } = await publicClient.simulateContract({
+          address: supportedChains[activeChain].bountyContractAddress,
+          abi: BountyContractABI,
+          functionName: "createBounty",
+          args: [0, parseEther(`${amount}`)],
+          value: parseEther(`${amount}`),
+        });
+
+      alert("Sending transaction...")
+      const hash = await turnkeyWalletClient.writeContract(request)
+      alert("Waiting for transaction receipt...")
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash,
+      });
+      alert('Decoding event log...')
+      const log = receipt.logs[0];
+      const decoded = decodeEventLog({
+        abi: BountyContractABI,
+        data: log.data,
+        topics: log.topics,
+      });
+      if (
+        decoded.eventName === "BountyCreated" &&
+        "args" in decoded &&
+        decoded.args &&
+        "bountyId" in decoded.args
+      ) {
+        const bountyId = decoded.args.bountyId as Address;
+        return { bountyId, hash };
+      }
+
+      return { bountyId: null, hash };
+    }
+  })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!address || !chain) {
@@ -314,10 +445,12 @@ export function CreateBountyDialog({
       chainId: supportedChains[activeChain].chain.id,
     };
 
-    const createBountyOnChain =
-      currentCurrency === "eth"
-        ? createBountyOnChainNative
-        : createBountyOnChainErc20;
+    // const createBountyOnChain =
+    //   currentCurrency === "eth"
+    //     ? createBountyOnChainNative
+    //     : createBountyOnChainErc20;
+    const createBountyOnChain = createBountyTurnkeyNative
+      
 
     const { bountyId } = await createBountyOnChain({
       amount: values.amount,
@@ -531,6 +664,7 @@ export function CreateBountyDialog({
                       isSendingDataToDb ||
                       isCreatingBountyOnchainNative ||
                       isCreatingBountyOnchainErc20
+                    || isCreatingBountyTurnkeyNative
                     }
                     type="submit"
                     disabled={hasInsufficientBalance}

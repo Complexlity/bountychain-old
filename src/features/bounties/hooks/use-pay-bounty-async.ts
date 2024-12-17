@@ -36,7 +36,6 @@ export const usePayBountyAsync = ({
         args: [bountyId as Address, winnerAddress],
       });
 
-      console.log({ request });
       if (!request) {
         throw new Error("Could not simulate contract");
       }

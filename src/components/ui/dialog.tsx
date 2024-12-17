@@ -30,7 +30,7 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 interface DialogContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
-  portalContainer: HTMLElement | null;
+  portalContainer?: HTMLElement | null;
 }
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,

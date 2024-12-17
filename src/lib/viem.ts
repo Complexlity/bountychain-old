@@ -1,5 +1,8 @@
 import { bountyAbi, bountyErc20Abi } from "@/features/bounties/lib/constants";
-import { createPublicClient, http } from "viem";
+import { TurnkeyBrowserClient } from "@turnkey/sdk-browser";
+import { TurnkeyServerClient } from "@turnkey/sdk-server";
+import { createAccount } from "@turnkey/viem";
+import { Account, Address, createPublicClient, createWalletClient, http } from "viem";
 import { arbitrum, arbitrumSepolia } from "viem/chains";
 
 export const supportedChains = {
@@ -54,3 +57,50 @@ export const getPublicClient = (chain: keyof typeof supportedChains) => {
     transport: http(),
   });
 };
+
+
+// export const getTurnKeyPublicClient = (chain: keyof typeof supportedChains) => {
+//     return createPublicClient({
+//       chain: supportedChains[chain].chain,
+//       transport: http(turnkeyConfig.rpcUrl),
+//     })
+//   }
+//   return publicClient
+// }
+
+export const getInjectedWalletClient = async (chain: keyof typeof supportedChains) => {
+    const [account] = await window.ethereum!.request({
+      method: "eth_requestAccounts",
+    })
+
+    const client = createWalletClient({
+      account,
+      chain: supportedChains[chain].chain,
+      transport: http(),
+    })
+
+  return client
+}
+
+
+export const getTurnkeyWalletClient = async (
+  chain: keyof typeof supportedChains, 
+  turnkeyClient: TurnkeyBrowserClient | TurnkeyServerClient,
+  signWith: string | Address
+) => {
+  // Create a new account using the provided Turnkey client and the specified account for signing
+  const turnkeyAccount = await createAccount({
+    client: turnkeyClient,
+    organizationId: process.env.NEXT_PUBLIC_ORGANIZATION_ID,
+    signWith,
+  })
+
+  // Create a wallet client using the newly created account, targeting the Sepolia chain
+  const client = createWalletClient({
+    account: turnkeyAccount as Account,
+    chain: supportedChains[chain].chain,
+    transport: http(),
+  })
+
+  return client
+}
