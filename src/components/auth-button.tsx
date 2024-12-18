@@ -122,7 +122,9 @@ export default function AuthButton({
         </Button>
       </HoverCardTrigger>
       <HoverCardContent className="w-48 p-2">
-      <Button
+        {/* Fix: Should be a buttion */}
+        <div
+          name="logout"
       variant="ghost"
           className="w-full justify-start"
           //@ts-expect-error: Logging out
@@ -130,7 +132,7 @@ export default function AuthButton({
       disabled={isPending}
     >
       {isPending ? 'Logging out...' : 'Logout'}
-    </Button>
+    </div>
       </HoverCardContent>
     </HoverCard>
   )

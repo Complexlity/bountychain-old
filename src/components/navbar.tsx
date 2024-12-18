@@ -1,6 +1,6 @@
 "use client";
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+// import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Coins } from "lucide-react";
@@ -8,6 +8,7 @@ import { Button } from "./ui/button";
 import { CreateBountyDialog } from "@/features/bounties/components/create-bounty-dialog";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
+import AuthDialog from "./auth-dialog";
 
 interface NavbarLink {
   href: string;
@@ -34,14 +35,15 @@ export default function Navbar() {
             <div className="hidden md:flex gap-4 sm:gap-6">
               <NavbarLinks links={navLinks} />
             </div>
-
+            
             <CreateBountyDialog>
               <Button className="bold flex h-fit rounded-none gap-1 px-2 py-2 text-sm">
                 <span className="hidden sm:inline">Create</span>
                 <span>New Bounty</span>
               </Button>
             </CreateBountyDialog>
-            <ConnectButton chainStatus={"icon"} showBalance={false} />
+            <AuthDialog />
+            {/* <ConnectButton chainStatus={"icon"} showBalance={false} /> */}
           </nav>
         </header>
       </div>

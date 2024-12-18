@@ -350,9 +350,8 @@ export function CreateBountyDialog({
       // });
       let turnkeyWalletClient = walletClient
       if (!turnkeyWalletClient) {
-        alert("Wallet client not found")
         if (client) {
-          alert("Client found. Getting wallet client")
+          
           turnkeyWalletClient = await getTurnkeyWalletClient(
             activeChain,
             client,
@@ -360,7 +359,7 @@ export function CreateBountyDialog({
           )
         }
         else {
-          alert("No client found. Getting current client")
+          
           // const authClient = await getActiveClient() 
           if (currentClient) {
             turnkeyWalletClient = await getTurnkeyWalletClient(
@@ -392,13 +391,11 @@ export function CreateBountyDialog({
           value: parseEther(`${amount}`),
         });
 
-      alert("Sending transaction...")
       const hash = await turnkeyWalletClient.writeContract(request)
-      alert("Waiting for transaction receipt...")
+      
       const receipt = await publicClient.waitForTransactionReceipt({
         hash,
       });
-      alert('Decoding event log...')
       const log = receipt.logs[0];
       const decoded = decodeEventLog({
         abi: BountyContractABI,

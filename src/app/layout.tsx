@@ -1,11 +1,11 @@
 import { Footer } from "@/components/footer";
-import Navbar from "@/components/login-nav";
+// import Navbar from "@/components/login-nav";
 import Providers from "@/components/providers";
 import "@rainbow-me/rainbowkit/styles.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-// import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar";
 
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",

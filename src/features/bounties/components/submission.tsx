@@ -72,7 +72,6 @@ export function SubmissionCard({
   useEffect(() => {
     const initializeWalletClient = async () => {
       if (!selectedAccount || !address || !client) {
-        alert('No client found. Getting current client')
         return
       }
       const walletClient = await getTurnkeyWalletClient(
@@ -230,9 +229,7 @@ export function SubmissionCard({
 
       let turnkeyWalletClient = walletClient
       if (!turnkeyWalletClient) {
-        alert("Wallet client not found")
         if (client) {
-          alert("")
           turnkeyWalletClient = await getTurnkeyWalletClient(
             activeChain,
             client,
