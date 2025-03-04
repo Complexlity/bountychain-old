@@ -3,22 +3,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { CopyButton } from "@/components/ui/copy-button";
-import { TruncatedAddress } from "@/components/ui/truncated-address";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { TruncatedAddress } from "@/components/ui/truncated-address";
 import { toast } from "@/hooks/use-toast";
+import { SupportedChainKey, supportedChains } from "@/lib/viem";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Clock, Loader2, Trophy, User } from "lucide-react";
 import type { Address } from "viem";
 import { useAccount } from "wagmi";
 import { usePayBounty } from "../hooks/use-pay-bounty";
 import { type Submission } from "../lib/types";
-import { SupportedChainKey, supportedChains } from "@/lib/viem";
 
 interface SubmissionCardProps {
   submission: Submission;
@@ -177,17 +176,15 @@ export function SubmissionCard({
             <div className="flex items-center min-w-0 flex-shrink-0">
               <User className="h-4 w-4 flex-shrink-0" />
               <div className="flex items-center ml-2">
-                {isUserSubmission ? (
-                  <span className="font-mono text-sm">You</span>
-                ) : (
-                  <TruncatedAddress
-                    address={submission.creator}
-                    className="text-sm"
-                  />
-                )}
-                <div className="flex-shrink-0">
-                  <CopyButton text={submission.creator} />
-                </div>
+              {isUserSubmission ? (
+        <span className="font-mono text-sm">You</span>
+      ) : (
+        <TruncatedAddress
+          address={submission.creator}
+          className="text-sm"
+        />
+      )}
+
               </div>
             </div>
 
