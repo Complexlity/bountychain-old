@@ -182,7 +182,6 @@ export function CreateBountyDialog({
     }
   }, [hasInsufficientBalance, form, currentBalance, isBalanceLoading]);
 
-  console.log({ currentCurrency });
 
   const currency = form.watch("currency");
   useEffect(() => {

@@ -36,12 +36,10 @@ export const usePayBountyAsync = ({
         args: [bountyId as Address, winnerAddress],
       });
 
-      console.log({ request });
       if (!request) {
         throw new Error("Could not simulate contract");
       }
 
-      console.log("Writing contract...");
       const hash = await writeContractAsync(request);
 
       const receipt = await publicClient.waitForTransactionReceipt({

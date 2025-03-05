@@ -4,7 +4,7 @@ import {
   supportedChains,
 } from "@/lib/viem";
 import { useMutation } from "@tanstack/react-query";
-import { Address, decodeEventLog, erc20Abi, parseUnits } from "viem";
+import { Address, decodeEventLog, parseUnits } from "viem";
 import { useAccount, useWriteContract } from "wagmi";
 
 export const useCreateBountyErc20 = ({
@@ -27,28 +27,15 @@ export const useCreateBountyErc20 = ({
 
       const activeChain = process.env
         .NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey;
-      console.log({ activeChain });
       const publicClient = getPublicClient(activeChain);
       const {
         address: contractAddress,
         decimals,
         abi: bountyAbi,
-        token: tokenAddress,
       } = supportedChains[activeChain].contracts[tokenType];
 
       const depositAmount = parseUnits(`${amount}`, decimals);
-      console.log({ depositAmount });
-      console.log({ tokenAddress, address, contractAddress });
 
-      const allowance = await publicClient.readContract({
-        address: tokenAddress,
-        abi: erc20Abi,
-        functionName: "allowance",
-        args: [address as Address, contractAddress],
-      });
-      console.log({ allowance });
-
-      console.log("Simulating...");
       const { request } = await publicClient.simulateContract({
         address: contractAddress,
         account: address,
@@ -61,10 +48,7 @@ export const useCreateBountyErc20 = ({
         throw new Error("Could not simulate contract");
       }
 
-      console.log({ request });
-      console.log("Writing...");
       const hash = await writeContractAsync(request);
-      console.log({ hash });
       const receipt = await publicClient.waitForTransactionReceipt({
         hash,
       });
