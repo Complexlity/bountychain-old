@@ -1,5 +1,7 @@
 
-import { useEnsName } from "@/hooks/use-ens-name";
+import { ensNameConfig } from "@/lib/wagmi-config";
+import { Hex } from "viem";
+import { useEnsName } from "wagmi";
 import { AddressCopyButton } from "./address-copy-button";
 
 
@@ -14,12 +16,21 @@ export function TruncatedAddress({
   className = "",
 }: TruncatedAddressProps) {
   // Use the new custom hook
-  const { data: ensName } = useEnsName(address);
+  const { data: ensName } = useEnsName({
+    address: address as Hex,
+    query: {
+      enabled: !!address,
+    },
+    config: ensNameConfig
+  });
+
+
   if (!address) return null;
   
   const start = address.slice(0, 6);
   const end = address.slice(-4);
-  
+
+  console.log({address, ensName})
   
   return (
     <div className="flex items-center">

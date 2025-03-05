@@ -2,15 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useEnsName } from "@/hooks/use-ens-name";
+import { ensNameConfig } from "@/lib/wagmi-config";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-// import { useEnsName } from 'wagmi';
+import { useEnsName } from 'wagmi';
+
 
 export function AddressCopyButton({ 
   text, 
@@ -20,7 +21,13 @@ export function AddressCopyButton({
   className?: string 
 }) {
   const [copied, setCopied] = useState(false);
-  const { data: ensName } = useEnsName(text as `0x${string}`);
+  const { data: ensName } = useEnsName({
+    address: text as `0x${string}`,
+    query: {
+      enabled: !!text
+    },
+    config: ensNameConfig
+  }); 
 
   const copyToClipboard = async (textToCopy: string) => {
     await navigator.clipboard.writeText(textToCopy);

@@ -1,5 +1,6 @@
 import { createConfig, http } from "wagmi";
-import { supportedChains, SupportedChainKey } from "./viem";
+import { SupportedChainKey, supportedChains } from "./viem";
+import { mainnet } from "viem/chains";
 
 const activeChain =
   supportedChains[process.env.NEXT_PUBLIC_ACTIVE_CHAIN as SupportedChainKey];
@@ -9,6 +10,13 @@ export const wagmiConfig = createConfig({
   //@ts-expect-error: This is valid
   transports: {
     [activeChain.chain.id]: http(),
+  },
+});
+
+export const ensNameConfig = createConfig({
+  chains: [mainnet], 
+  transports: {
+    [mainnet.id]: http()
   },
 });
 
