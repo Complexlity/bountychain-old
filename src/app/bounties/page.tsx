@@ -21,7 +21,7 @@ import { useMemo, useState } from "react";
 
 export default function BountiesPage() {
   const { data, isPending } = useBounties();
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState("ongoing");
   const [selectedToken, setSelectedToken] = useState("all");
 
   const activeChainId =
