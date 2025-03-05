@@ -30,23 +30,23 @@ export function TruncatedAddress({
   const start = address.slice(0, 6);
   const end = address.slice(-4);
 
-  console.log({address, ensName})
-  
   return (
     <div className="flex items-center">
       {ensName ? (
-        <span className={`md:hidden font-mono font-bold ${className}`}>
+        <span className={`font-mono font-bold ${className}`}>
           {ensName}
         </span>
       ) : (
+        <>
         <span className={` md:hidden font-mono ${className}`}>
           {start}...{end}
         </span>
-      )}
       
       <span className={`hidden md:inline font-mono ${className}`}>
         {address}
       </span>
+        </>
+      )}
       
       <AddressCopyButton className="mx-1 px-1 outline-none" text={address} />
     </div>
